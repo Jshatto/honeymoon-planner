@@ -1,0 +1,1401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Honeymoon Planner — Gatlinburg, TN (May 4–8)</title>
+  <style>
+    :root{
+      --bg:#F3EFEA;
+      --ink:#8B6B73;
+      --rose:#D6B4BC;
+      --taupe:#C7BDB4;
+      --sage:#9FAF9F;
+      --gold:#B7A26A;
+      --text:#111827;
+      --muted:#6B7280;
+      --border:#E5E7EB;
+      --card:#FFFFFF;
+      --radius:12px;
+      --shadow: 0 1px 2px rgba(0,0,0,.06);
+      --shadow2: 0 1px 2px rgba(0,0,0,.04);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    .container{max-width:1150px;margin:0 auto;padding:24px}
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      border:1px solid rgba(0,0,0,.04);
+      box-shadow:var(--shadow2);
+    }
+
+    /* spacing + typography (React-like) */
+    .mb-8{margin-bottom:32px}
+    .mb-6{margin-bottom:24px}
+    .mb-4{margin-bottom:16px}
+    .mt-2{margin-top:8px}
+    .mt-4{margin-top:16px}
+    .mt-6{margin-top:24px}
+    .p-6{padding:24px}
+    .p-4{padding:16px}
+    .p-3{padding:12px}
+    .text-center{text-align:center}
+    .text-right{text-align:right}
+    .text-4xl{font-size:36px; line-height:1.1}
+    .text-2xl{font-size:24px}
+    .text-xl{font-size:20px}
+    .text-lg{font-size:18px}
+    .text-sm{font-size:14px}
+    .text-xs{font-size:12px}
+    .font-serif{font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;}
+    .font-semibold{font-weight:600}
+    .font-bold{font-weight:800}
+    .italic{font-style:italic}
+    .text-gray-600{color:var(--muted)}
+    .text-gray-700{color:#374151}
+    .text-gray-500{color:#6B7280}
+    .text-gray-400{color:#9CA3AF}
+
+    .inline-flex{display:inline-flex}
+    .items-center{align-items:center}
+    .gap-1{gap:6px}
+    .gap-2{gap:8px}
+    .gap-3{gap:12px}
+    .rounded-full{border-radius:999px}
+    .rounded-lg{border-radius:12px}
+    .w-full{width:100%}
+
+    .grid{display:grid}
+    .grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .gap-4{gap:16px}
+    .gap-3{gap:12px}
+    .gap-2{gap:8px}
+    @media (max-width: 980px){
+      .grid-cols-5{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .grid-cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media (max-width: 720px){
+      .grid-cols-5,.grid-cols-4,.grid-cols-3,.grid-cols-2{grid-template-columns:1fr}
+    }
+
+    .border-t{border-top:1px solid var(--border)}
+    .overflow-hidden{overflow:hidden}
+    .overflow-x-auto{overflow-x:auto}
+
+    /* inputs/buttons */
+    input, select, textarea{
+      border:1px solid #D1D5DB;
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:14px;
+      outline:none;
+      background:white;
+    }
+    input:focus, select:focus, textarea:focus{
+      box-shadow: 0 0 0 3px rgba(214,180,188,.35);
+      border-color: var(--taupe);
+    }
+    button{
+      cursor:pointer;
+      border:0;
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:700;
+      background:transparent;
+    }
+    .btn-primary{background:var(--rose);color:white}
+    .btn-primary:hover{opacity:.92}
+    .btn-icon{width:44px;display:inline-grid;place-items:center}
+    .hover-bg:hover{background:#F9FAFB}
+
+    /* progress bar */
+    .progress-outer{background:#E5E7EB;border-radius:999px;overflow:hidden;height:12px}
+    .progress-inner{height:100%;background:var(--rose);border-radius:999px;transition:width .35s ease}
+
+    /* collapsible sections */
+    .section-header{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:16px;
+    }
+    .section-left{display:flex;align-items:center;gap:12px;flex:1}
+    .section-title{font-weight:600;font-size:18px}
+    .chev{font-size:18px;width:20px;display:inline-grid;place-items:center;color:#6B7280}
+    .badge{padding:6px 12px;border-radius:999px;font-size:14px}
+
+    /* checklist rows */
+    .row-item{
+      display:flex;align-items:center;gap:12px;
+      padding:16px;
+      border-bottom:1px solid #F3F4F6;
+    }
+    .row-item:last-child{border-bottom:0}
+    .row-text{flex:1}
+    .line-through{text-decoration:line-through}
+    .icon-btn{
+      background:transparent;
+      padding:6px;
+      border-radius:10px;
+      color:#9CA3AF;
+    }
+    .icon-btn:hover{color:#EF4444}
+    .checkbox{
+      width:20px;height:20px;border-radius:999px;border:2px solid #D1D5DB;
+      display:inline-grid;place-items:center;
+      background:white;color:white;font-weight:900;font-size:12px;
+    }
+    .checkbox.done{border-color:var(--rose);background:var(--rose)}
+
+    /* kpi cards */
+    .kpi{
+      padding:14px;border-radius:12px;background:var(--bg);
+      border:1px solid rgba(199,189,180,.5);
+    }
+    .kpi .label{font-size:12px;color:var(--muted)}
+    .kpi .value{font-size:24px;font-weight:900;color:var(--ink);margin-top:2px}
+    .kpi .value.good{color:var(--sage)}
+    .kpi .value.bad{color:#DC2626}
+
+    /* tables */
+    table{width:100%;border-collapse:collapse}
+    thead th{
+      text-align:left;
+      padding:10px 12px;
+      background:var(--bg);
+      color:var(--ink);
+      font-size:13px;
+      border-bottom:1px solid var(--border);
+      white-space:nowrap;
+    }
+    tbody td{
+      padding:10px 12px;
+      border-top:1px solid var(--border);
+      font-size:13px;
+      vertical-align:top;
+    }
+    .right{text-align:right}
+    .center{text-align:center}
+
+    /* tabs */
+    .tabsWrap{margin-bottom:24px;background:white;border-radius:12px;box-shadow:var(--shadow);padding:8px;overflow-x:auto}
+    .tabsRow{display:flex;gap:6px;min-width:max-content}
+    .tabBtn{
+      display:flex;align-items:center;gap:8px;
+      padding:10px 12px;border-radius:12px;
+      color:#4B5563;font-weight:700;font-size:14px;
+    }
+    .tabBtn:hover{background:#F3F4F6}
+    .tabBtn.active{background:var(--rose);color:white}
+    .tabIcon{width:18px;text-align:center}
+
+    .hidden{display:none !important}
+
+    /* Priority pill styles */
+    .priority-pill{
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1px solid transparent;
+      user-select: none;
+      white-space: nowrap;
+      transition: filter .12s ease, transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .priority-pill{
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+    .priority-high{
+      background: #FEE2E2;
+      color: #B91C1C;
+      border-color: #FCA5A5;
+    }
+    .priority-medium{
+      background: #FEF3C7;
+      color: #92400E;
+      border-color: #FCD34D;
+    }
+    .priority-low{
+      background: #DCFCE7;
+      color: #166534;
+      border-color: #86EFAC;
+    }
+    /* Selected state (for "Add new item" pills) */
+    .priority-pill.selected{
+      filter: brightness(0.9);
+      border-color: rgba(0,0,0,.35);
+      box-shadow:
+        0 0 0 3px rgba(0,0,0,.14),
+        inset 0 1px 2px rgba(0,0,0,.18);
+      transform: translateY(-1px);
+    }
+  
+    /* --- Responsive + iOS/iPad optimizations --- */
+    html{ -webkit-text-size-adjust:100%; }
+    body{
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+    .container{
+      padding: clamp(14px, 3.2vw, 24px);
+    }
+    /* Comfortable tap targets */
+    button, .tabBtn, .icon-btn{
+      min-height:44px;
+    }
+    .btn-icon{ min-width:44px; }
+    input, select, textarea{
+      min-height:44px;
+      font-size:16px; /* prevents iOS zoom on focus */
+    }
+    textarea{ min-height:auto; }
+    /* Smooth horizontal scrolling on iOS */
+    .overflow-x-auto, .tabsWrap{
+      -webkit-overflow-scrolling: touch;
+    }
+    /* Sticky tabs for mobile */
+    .tabsWrap{
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(0,0,0,.06);
+    }
+    /* Slightly tighter type on very small screens */
+    @media (max-width: 420px){
+      .text-4xl{font-size:30px}
+      .text-2xl{font-size:21px}
+      .p-6{padding:18px}
+      .p-4{padding:14px}
+      .row-item{padding:14px}
+    }
+    /* ================================
+   Add Checklist row — match Wedding
+   (single line on desktop)
+   ================================ */
+#addChecklistRow{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap; /* mobile/tablet can wrap */
+}
+#addChecklistRow > *{ flex:0 0 auto; }
+
+/* keep controls from stretching full width in flex */
+#addChecklistRow select,
+#addChecklistRow input,
+#addChecklistRow button{ width:auto; }
+
+#addChecklistRow select{
+  flex:0 0 220px;
+  max-width:220px;
+  min-width:220px;
+}
+#addChecklistRow input#newItemText{
+  flex:1 1 auto;
+  min-width:320px;
+}
+
+/* priority pills group (created by JS uses #newItemPriority) */
+#newItemPriority{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:0 0 auto;
+}
+
+/* Make pills thinner like Wedding (no forced tall tap target) */
+.priority-pill{
+  min-height:unset !important;
+  padding:6px 12px;
+  line-height:1;
+}
+
+/* plus button: small square like Wedding */
+#addChecklistRow #addItemBtn{
+  width:44px;
+  height:44px;
+  padding:0;
+  display:inline-grid;
+  place-items:center;
+  flex:0 0 44px;
+  border-radius:12px;
+}
+
+/* Desktop: force one line */
+@media (min-width: 980px){
+  #addChecklistRow{ flex-wrap:nowrap; }
+  #addChecklistRow select{ flex-basis:200px; max-width:200px; min-width:200px; }
+  #addChecklistRow input#newItemText{ min-width:420px; }
+}
+
+/* Mid screens */
+@media (max-width: 979px) and (min-width: 721px){
+  #addChecklistRow select{ flex-basis:200px; max-width:200px; min-width:200px; }
+  #addChecklistRow input#newItemText{ min-width:260px; }
+}
+
+</style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-serif" style="color:var(--ink); margin:0 0 8px;">Jayme &amp; Nate</h1>
+      <p class="text-gray-600 italic" style="margin:0;">Honeymoon • Gatlinburg, Tennessee</p>
+      <div class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full" style="background:var(--taupe); padding:10px 14px;">
+        <span aria-hidden="true">🗓️</span>
+        <span class="text-sm" style="color:var(--ink)"><b>May 4–8</b> • 4 nights</span>
+      </div>
+    </div>
+
+    <div class="tabsWrap">
+      <div class="tabsRow" id="tabsRow"></div>
+    </div>
+
+    <section id="tab-checklist">
+      <div class="mb-8 p-6 card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <h2 class="text-xl font-semibold" style="color:var(--ink); margin:0;">Trip Prep Progress</h2>
+          <span id="prepProgressPct" class="text-2xl font-bold" style="color:var(--ink)">0%</span>
+        </div>
+        <div class="w-full progress-outer">
+          <div id="prepProgressBar" class="progress-inner" style="width:0%"></div>
+        </div>
+        <p id="prepProgressText" class="text-sm text-gray-600" style="margin:8px 0 0;">0 of 0 items completed</p>
+      </div>
+
+      <div class="mb-6 p-4 card">
+        <h3 class="font-semibold" style="color:var(--ink); margin:0 0 12px;">Add New Checklist Item</h3>
+        <div id="addChecklistRow" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <select id="newItemSection" style="min-width:240px; border-color:var(--taupe);">
+            <option value="">Select section...</option>
+          </select>
+          <input id="newItemText" type="text" placeholder="Item description..." style="flex:1; min-width:220px; border-color:var(--taupe);" />
+          <button id="addItemBtn" class="btn-primary btn-icon" title="Add" type="button">＋</button>
+        </div>
+      </div>
+
+      <div id="sectionsRoot" style="display:flex; flex-direction:column; gap:16px;"></div>
+    </section>
+
+    <section id="tab-budget" class="hidden">
+      <div class="mb-8 p-6 card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+          <div>
+            <h2 class="text-xl font-semibold" style="color:var(--ink); margin:0 0 4px;">Budget Overview</h2>
+            <p class="text-sm text-gray-600" style="margin:0;">Track honeymoon expenses</p>
+          </div>
+          <div class="text-right">
+            <input id="totalBudgetInput" type="number" step="0.01" placeholder="Total budget"
+              style="font-size:26px;font-weight:900;color:var(--ink);text-align:right;width:190px;border:0;border-bottom:2px solid var(--taupe);border-radius:0;padding:6px 2px;background:transparent" />
+            <p class="text-sm text-gray-600" style="margin:6px 0 0;">Total Budget</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4" style="margin-top:14px;">
+          <div class="kpi">
+            <div class="label">Spent</div>
+            <div class="value" id="spentKpi">$0.00</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Remaining</div>
+            <div class="value good" id="remainingKpi">$0.00</div>
+          </div>
+          <div class="kpi">
+            <div class="label">% Used</div>
+            <div class="value" id="pctKpi">0%</div>
+          </div>
+        </div>
+
+        <div class="w-full progress-outer" style="margin-top:12px;">
+          <div id="budgetBar" class="progress-inner" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="mb-6 p-4 card">
+        <h3 class="font-semibold" style="color:var(--ink); margin:0 0 12px;">Add Expense</h3>
+        <div class="grid grid-cols-4 gap-2">
+          <input id="bCat" type="text" placeholder="Category (Lodging, Food, Activities...)" />
+          <input id="bItem" type="text" placeholder="Item" />
+          <input id="bAmt" type="number" step="0.01" placeholder="Amount" />
+          <button id="bAdd" class="btn-primary" type="button">Add</button>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Item</th>
+                <th class="right">Amount</th>
+                <th class="center">Paid</th>
+                <th style="width:56px"></th>
+              </tr>
+            </thead>
+            <tbody id="budgetBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-lodging" class="hidden">
+      <div class="mb-6 p-6 card">
+        <h2 class="text-xl font-semibold" style="color:var(--ink); margin:0 0 6px;">Lodging Snapshot</h2>
+        <p class="text-sm text-gray-600" style="margin:0 0 14px;">Keep everything you need in one place.</p>
+
+        <div class="grid grid-cols-2 gap-3">
+          <input id="lodgingName" placeholder="Lodging name (cabin/hotel)" />
+          <input id="lodgingAddress" placeholder="Address" />
+          <input id="lodgingCheckIn" placeholder="Check-in time" />
+          <input id="lodgingCheckOut" placeholder="Check-out time" />
+          <input id="lodgingConf" placeholder="Confirmation #" />
+          <input id="lodgingParking" placeholder="Parking / gate code / notes" />
+        </div>
+
+        <div class="mt-4">
+          <button id="saveLodgingBtn" class="btn-primary" type="button">Save Lodging</button>
+          <span id="lodgingSavedMsg" class="text-sm text-gray-600" style="margin-left:10px;"></span>
+        </div>
+      </div>
+
+      <div class="mb-6 p-4 card">
+        <h3 class="font-semibold" style="color:var(--ink); margin:0 0 12px;">Add Contact</h3>
+        <div class="grid grid-cols-4 gap-2">
+          <input id="cName" placeholder="Name (host, hotel, tour, etc.)" />
+          <input id="cType" placeholder="Type (Lodging / Tickets / Restaurant)" />
+          <input id="cPhone" placeholder="Phone" />
+          <button id="cAdd" class="btn-primary" type="button">Add</button>
+        </div>
+      </div>
+
+      <div id="contactsRoot" style="display:flex; flex-direction:column; gap:12px;"></div>
+    </section>
+
+    <section id="tab-itinerary" class="hidden">
+      <div class="mb-6 p-6 card">
+        <h2 class="text-xl font-semibold" style="color:var(--ink); margin:0 0 6px;">Itinerary</h2>
+        <p class="text-sm text-gray-600" style="margin:0;">Add events (and times if you want). They’ll sort by date + time.</p>
+      </div>
+
+      <div class="mb-6 p-4 card">
+        <h3 class="font-semibold" style="color:var(--ink); margin:0 0 12px;">Add Itinerary Item</h3>
+        <div class="grid grid-cols-4 gap-2">
+          <select id="iDate">
+            <option value="2026-05-04">May 4</option>
+            <option value="2026-05-05">May 5</option>
+            <option value="2026-05-06">May 6</option>
+            <option value="2026-05-07">May 7</option>
+            <option value="2026-05-08">May 8</option>
+          </select>
+          <input id="iTime" type="time" />
+          <input id="iEvent" placeholder="Event (check-in, hike, dinner...)" />
+          <button id="iAdd" class="btn-primary" type="button">Add</button>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:140px;">Date</th>
+                <th style="width:110px;">Time</th>
+                <th>Event</th>
+                <th style="width:56px;"></th>
+              </tr>
+            </thead>
+            <tbody id="itineraryBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-shopping" class="hidden">
+      <div class="mb-6 p-6 card">
+        <h2 class="text-xl font-semibold" style="color:var(--ink); margin:0 0 6px;">Shopping / To-Buy</h2>
+        <p class="text-sm text-gray-600" style="margin:0;">Anything you need before you leave.</p>
+      </div>
+
+      <div class="mb-6 p-4 card">
+        <h3 class="font-semibold" style="color:var(--ink); margin:0 0 12px;">Add Item</h3>
+        <div class="grid grid-cols-4 gap-2">
+          <input id="sItem" placeholder="Item" />
+          <input id="sQty" placeholder="Qty (optional)" />
+          <input id="sPrice" type="number" step="0.01" placeholder="Price (optional)" />
+          <button id="sAdd" class="btn-primary" type="button">Add</button>
+        </div>
+      </div>
+
+      <div class="card p-3" id="shoppingRoot"></div>
+    </section>
+
+    <section id="tab-packing" class="hidden">
+      <div class="mb-6 p-6 card">
+        <h2 class="text-xl font-semibold" style="color:var(--ink); margin:0 0 6px;">Packing List</h2>
+        <p class="text-sm text-gray-600" style="margin:0;">Check items off as you pack so nothing is forgotten.</p>
+      </div>
+
+      <div class="mb-6 p-4 card">
+        <h3 class="font-semibold" style="color:var(--ink); margin:0 0 12px;">Add Item</h3>
+        <div class="grid grid-cols-3 gap-2">
+          <input id="pCat" placeholder="Category (Clothing, Toiletries…)" />
+          <input id="pItem" placeholder="Item" />
+          <button id="pAdd" class="btn-primary" type="button">Add</button>
+        </div>
+      </div>
+
+      <div class="card p-3" id="packingRoot"></div>
+    </section>
+
+    <section id="tab-ideas" class="hidden">
+      <div class="mb-6 p-6 card">
+        <h2 class="text-xl font-semibold" style="color:var(--ink); margin:0 0 6px;">Ideas &amp; Inspiration</h2>
+        <p class="text-sm text-gray-600" style="margin:0;">Save links, spots, hikes, restaurants, viewpoints, etc.</p>
+      </div>
+
+      <div class="mb-6 p-4 card">
+        <h3 class="font-semibold" style="color:var(--ink); margin:0 0 12px;">Add Idea</h3>
+        <div class="grid grid-cols-3 gap-2">
+          <input id="xTitle" placeholder="Title" />
+          <input id="xLink" placeholder="Link or note" />
+          <button id="xAdd" class="btn-primary" type="button">Add</button>
+        </div>
+      </div>
+
+      <div id="ideasRoot" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </section>
+
+    <section id="tab-notes" class="hidden">
+      <div class="mb-6 p-6 card">
+        <h2 class="text-xl font-semibold" style="color:var(--ink); margin:0 0 6px;">Notes</h2>
+        <p class="text-sm text-gray-600" style="margin:0;">Confirmations, addresses, passwords, random thoughts—whatever.</p>
+      </div>
+
+      <div class="card p-4">
+        <textarea id="notesText" rows="18" class="w-full" placeholder="Add your notes, ideas, decisions, reminders..."></textarea>
+      </div>
+    </section>
+  </div>
+
+  <script>
+  const KEYS = {
+    activeTab: "honeymoon-active-tab",
+    items: "honeymoon-items",
+    expanded: "honeymoon-expanded",
+    budget: "honeymoon-budget",
+    totalBudget: "honeymoon-total-budget",
+    lodging: "honeymoon-lodging",
+    contacts: "honeymoon-contacts",
+    itinerary: "honeymoon-itinerary",
+    shopping: "honeymoon-shopping",
+    packing: "honeymoon-packing",
+    ideas: "honeymoon-ideas",
+    notes: "honeymoon-notes"
+  };
+
+  const tabs = [
+    { id: "checklist", name: "Checklist", icon: "✅" },
+    { id: "budget", name: "Budget", icon: "💵" },
+    { id: "lodging", name: "Lodging & Contacts", icon: "🏡" },
+    { id: "itinerary", name: "Itinerary", icon: "🗓️" },
+    { id: "shopping", name: "Shopping", icon: "🛒" },
+    { id: "packing", name: "Packing", icon: "🎒" },
+    { id: "ideas", name: "Ideas", icon: "💡" },
+    { id: "notes", name: "Notes", icon: "📝" }
+  ];
+
+  const sections = [
+    { name: "Bookings", color: "#D6B4BC", textColor: "#8B6B73" },
+    { name: "Travel & Logistics", color: "#C7BDB4", textColor: "#6B6359" },
+    { name: "Activities & Dates", color: "#9FAF9F", textColor: "#5A6B5A" },
+    { name: "Packing", color: "#B7A26A", textColor: "#7A6B45" },
+    { name: "Money & Documents", color: "#D6B4BC", textColor: "#8B6B73" },
+    { name: "Home & Pets", color: "#C7BDB4", textColor: "#6B6359" }
+  ];
+
+  const initialItems = [
+    { id: 1, section: "Bookings", text: "Book lodging (cabin/hotel) for May 4–8", done: false, priority: "high" },
+    { id: 2, section: "Bookings", text: "Confirm check-in/check-out times + parking instructions", done: false, priority: "medium" },
+    { id: 3, section: "Bookings", text: "Pick + book 1 big activity (Anakeesta / SkyLift Park / zipline)", done: false, priority: "medium" },
+    { id: 4, section: "Bookings", text: "Pick one ‘date night’ dinner spot (reserve if needed)", done: false, priority: "medium" },
+
+    { id: 5, section: "Travel & Logistics", text: "Decide drive plan + departure time for May 4", done: false, priority: "high" },
+    { id: 6, section: "Travel & Logistics", text: "Save route + offline map (cell service can be spotty)", done: false, priority: "medium" },
+    { id: 7, section: "Travel & Logistics", text: "Build a short list of coffee/food stops", done: false, priority: "low" },
+
+    { id: 8, section: "Activities & Dates", text: "Choose a scenic drive + short hike for May 5", done: false, priority: "medium" },
+    { id: 9, section: "Activities & Dates", text: "Make a rainy-day backup plan (shops, aquarium, arcade, spa)", done: false, priority: "low" },
+    { id: 10, section: "Activities & Dates", text: "Pick a sunrise/sunset viewpoint (easy + romantic)", done: false, priority: "low" },
+
+    { id: 11, section: "Packing", text: "Outfits for 5 days + layers (mountain temps change fast)", done: false, priority: "high" },
+    { id: 12, section: "Packing", text: "Comfortable walking shoes + socks", done: false, priority: "high" },
+    { id: 13, section: "Packing", text: "Toiletries + meds + chargers", done: false, priority: "high" },
+    { id: 14, section: "Packing", text: "Swimsuit / hot tub items (if your cabin has one)", done: false, priority: "low" },
+
+    { id: 15, section: "Money & Documents", text: "Set total honeymoon budget + add expected expenses", done: false, priority: "high" },
+    { id: 16, section: "Money & Documents", text: "Store confirmations (lodging/tickets) in one place", done: false, priority: "medium" },
+    { id: 17, section: "Money & Documents", text: "Make sure cards/cash are ready", done: false, priority: "low" },
+
+    { id: 18, section: "Home & Pets", text: "Arrange pet plan / sitter (if needed)", done: false, priority: "high" },
+    { id: 19, section: "Home & Pets", text: "Trash/clean kitchen before leaving", done: false, priority: "low" },
+    { id: 20, section: "Home & Pets", text: "Lock-up checklist (lights/thermostat/doors)", done: false, priority: "low" }
+  ];
+
+  const initialItinerary = [
+    { id: 1, date: "2026-05-04", time: "15:30", event: "Arrive in Gatlinburg / check-in (adjust once you know)" },
+    { id: 2, date: "2026-05-04", time: "18:30", event: "Easy dinner + relax" },
+    { id: 3, date: "2026-05-05", time: "10:00", event: "Smokies scenic drive + short hike" },
+    { id: 4, date: "2026-05-05", time: "19:00", event: "Cozy dinner / date night" },
+    { id: 5, date: "2026-05-06", time: "11:00", event: "Downtown stroll + shops" },
+    { id: 6, date: "2026-05-07", time: "13:00", event: "Big activity (Anakeesta/SkyLift/Zipline)" },
+    { id: 7, date: "2026-05-08", time: "10:00", event: "Pack + check-out" }
+  ];
+
+  const initialPacking = [
+    { id: 1, category: "Clothing", item: "Everyday outfits (5 days)", packed: false },
+    { id: 2, category: "Clothing", item: "Layers / jacket (cool mornings)", packed: false },
+    { id: 3, category: "Clothing", item: "Comfortable walking shoes", packed: false },
+    { id: 4, category: "Toiletries", item: "Toothbrush / skincare / meds", packed: false },
+    { id: 5, category: "Tech", item: "Phone chargers / power bank", packed: false },
+    { id: 6, category: "Misc", item: "Sunglasses / sunscreen", packed: false }
+  ];
+
+  const state = {
+    activeTab: "checklist",
+    items: [],
+    expanded: {},
+    budget: [],
+    totalBudget: 0,
+    lodging: { name:"", address:"", checkIn:"", checkOut:"", conf:"", parking:"" },
+    contacts: [],
+    itinerary: [],
+    shopping: [],
+    packing: [],
+    ideas: [],
+    notes: ""
+  };
+
+  function escapeHtml(str){
+    return String(str ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+  function el(html){
+    const t = document.createElement("template");
+    t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+  function money(n){ return (Number(n)||0).toFixed(2); }
+
+  let newItemPriority = "medium";
+
+  function setNewItemPriorityUI(priority){
+    const wrap = document.getElementById("newItemPriority");
+    if(!wrap) return;
+    const norm = (priority || "medium").toLowerCase();
+    wrap.querySelectorAll(".priority-pill").forEach(p => {
+      const val = (p.dataset.val || "").toLowerCase();
+      p.classList.toggle("selected", val === norm);
+    });
+  }
+
+  function wireNewItemPriorityPills(){
+    const wrap = document.getElementById("newItemPriority");
+    if(!wrap) return;
+    if(wrap.dataset.wired === "true") return;
+    wrap.dataset.wired = "true";
+
+    wrap.querySelectorAll(".priority-pill").forEach(p => {
+      p.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        newItemPriority = (p.dataset.val || "medium").toLowerCase();
+        setNewItemPriorityUI(newItemPriority);
+      });
+    });
+
+    setNewItemPriorityUI(newItemPriority);
+  }
+
+  function load(){
+    state.activeTab = localStorage.getItem(KEYS.activeTab) || "checklist";
+
+    try{
+      const saved = localStorage.getItem(KEYS.items);
+      const parsed = saved ? JSON.parse(saved) : null;
+      state.items = (Array.isArray(parsed) && parsed.length > 0) ? parsed : initialItems;
+    }catch(e){
+      state.items = initialItems;
+    }
+
+    state.items = (state.items || []).map(i => ({
+      id: i.id ?? Date.now(),
+      section: (i.section ?? i.category ?? "Travel & Logistics"),
+      text: (i.text ?? i.task ?? ""),
+      done: !!i.done,
+      priority: (i.priority || "medium").toLowerCase()
+    })).filter(i => i.text.trim() !== "");
+
+    try{
+      const exp = localStorage.getItem(KEYS.expanded);
+      state.expanded = exp ? JSON.parse(exp) : {};
+    }catch(e){ state.expanded = {}; }
+
+    try{
+      const bud = localStorage.getItem(KEYS.budget);
+      state.budget = bud ? JSON.parse(bud) : [];
+    }catch(e){ state.budget = []; }
+
+    state.totalBudget = parseFloat(localStorage.getItem(KEYS.totalBudget) || "0") || 0;
+
+    try{
+      const lod = localStorage.getItem(KEYS.lodging);
+      state.lodging = lod ? JSON.parse(lod) : state.lodging;
+    }catch(e){}
+
+    try{
+      const c = localStorage.getItem(KEYS.contacts);
+      state.contacts = c ? JSON.parse(c) : [];
+    }catch(e){ state.contacts = []; }
+
+    try{
+      const it = localStorage.getItem(KEYS.itinerary);
+      state.itinerary = it ? JSON.parse(it) : initialItinerary;
+    }catch(e){ state.itinerary = initialItinerary; }
+
+    try{
+      const s = localStorage.getItem(KEYS.shopping);
+      state.shopping = s ? JSON.parse(s) : [];
+    }catch(e){ state.shopping = []; }
+
+    try{
+      const p = localStorage.getItem(KEYS.packing);
+      state.packing = p ? JSON.parse(p) : initialPacking;
+    }catch(e){ state.packing = initialPacking; }
+
+    try{
+      const i = localStorage.getItem(KEYS.ideas);
+      state.ideas = i ? JSON.parse(i) : [];
+    }catch(e){ state.ideas = []; }
+
+    state.notes = localStorage.getItem(KEYS.notes) || "";
+  }
+
+  function save(key, val){
+    try{ localStorage.setItem(key, typeof val === "string" ? val : JSON.stringify(val)); }catch(e){}
+  }
+
+  function setActiveTab(id){
+    state.activeTab = id;
+    save(KEYS.activeTab, id);
+    renderTabs();
+    render();
+  }
+
+  function renderTabs(){
+    const row = document.getElementById("tabsRow");
+    row.innerHTML = "";
+    tabs.forEach(t => {
+      const b = el(`
+        <button class="tabBtn ${state.activeTab===t.id ? "active" : ""}" type="button">
+          <span class="tabIcon" aria-hidden="true">${t.icon}</span>
+          <span>${escapeHtml(t.name)}</span>
+        </button>
+      `);
+      b.addEventListener("click", () => setActiveTab(t.id));
+      row.appendChild(b);
+    });
+
+    tabs.forEach(t => {
+      const sec = document.getElementById("tab-" + t.id);
+      if(!sec) return;
+      sec.classList.toggle("hidden", state.activeTab !== t.id);
+    });
+  }
+
+  function getProgress(sectionName){
+    const list = state.items.filter(i => i.section === sectionName);
+    const done = list.filter(i => i.done).length;
+    return list.length ? Math.round((done/list.length)*100) : 0;
+  }
+  function getTotalProgress(){
+    const done = state.items.filter(i => i.done).length;
+    return state.items.length ? Math.round((done/state.items.length)*100) : 0;
+  }
+  function isExpanded(name){ return state.expanded[name] !== false; }
+
+  function toggleItem(id){
+    state.items = state.items.map(i => i.id === id ? ({...i, done: !i.done}) : i);
+    save(KEYS.items, state.items);
+    render();
+  }
+  function deleteItem(id){
+    state.items = state.items.filter(i => i.id !== id);
+    save(KEYS.items, state.items);
+    render();
+  }
+  function toggleSection(name){
+    state.expanded[name] = !(state.expanded[name] ?? true);
+    save(KEYS.expanded, state.expanded);
+    render();
+  }
+
+  function nextPriority(current){
+    const c = (current || "medium").toLowerCase();
+    if(c === "high") return "medium";
+    if(c === "medium") return "low";
+    return "high";
+  }
+
+  function addNewItem(){
+    const sec = document.getElementById("newItemSection").value.trim();
+    const text = document.getElementById("newItemText").value.trim();
+    const pri = (newItemPriority || "medium").toLowerCase();
+    if(!sec || !text) return;
+
+    state.items.push({
+      id: Date.now(),
+      section: sec,
+      text,
+      done: false,
+      priority: pri
+    });
+    save(KEYS.items, state.items);
+
+    document.getElementById("newItemSection").value = "";
+    document.getElementById("newItemText").value = "";
+    newItemPriority = "medium";
+    setNewItemPriorityUI("medium");
+
+    render();
+  }
+
+  function setItemPriority(id, priority){
+    state.items = state.items.map(i => i.id === id ? ({...i, priority}) : i);
+    save(KEYS.items, state.items);
+    render();
+  }
+
+  function computeBudget(){
+    const spent = state.budget.reduce((s,it)=> s + (parseFloat(it.amount)||0), 0);
+    const remaining = (state.totalBudget||0) - spent;
+    const pct = state.totalBudget > 0 ? Math.round((spent/state.totalBudget)*100) : 0;
+    const barPct = state.totalBudget > 0 ? Math.min((spent/state.totalBudget)*100, 100) : 0;
+    return { spent, remaining, pct, barPct };
+  }
+  function addExpense(){
+    const cat = document.getElementById("bCat").value.trim();
+    const item = document.getElementById("bItem").value.trim();
+    const amt = document.getElementById("bAmt").value.trim();
+    if(!cat || !item || !amt) return;
+    state.budget.push({ id: Date.now(), category: cat, item, amount: parseFloat(amt)||0, paid:false });
+    save(KEYS.budget, state.budget);
+    document.getElementById("bCat").value = "";
+    document.getElementById("bItem").value = "";
+    document.getElementById("bAmt").value = "";
+    render();
+  }
+  function togglePaid(id){
+    state.budget = state.budget.map(b => b.id === id ? ({...b, paid: !b.paid}) : b);
+    save(KEYS.budget, state.budget);
+    render();
+  }
+  function deleteExpense(id){
+    state.budget = state.budget.filter(b => b.id !== id);
+    save(KEYS.budget, state.budget);
+    render();
+  }
+
+  function hydrateLodging(){
+    document.getElementById("lodgingName").value = state.lodging.name || "";
+    document.getElementById("lodgingAddress").value = state.lodging.address || "";
+    document.getElementById("lodgingCheckIn").value = state.lodging.checkIn || "";
+    document.getElementById("lodgingCheckOut").value = state.lodging.checkOut || "";
+    document.getElementById("lodgingConf").value = state.lodging.conf || "";
+    document.getElementById("lodgingParking").value = state.lodging.parking || "";
+  }
+  function saveLodging(){
+    state.lodging = {
+      name: document.getElementById("lodgingName").value.trim(),
+      address: document.getElementById("lodgingAddress").value.trim(),
+      checkIn: document.getElementById("lodgingCheckIn").value.trim(),
+      checkOut: document.getElementById("lodgingCheckOut").value.trim(),
+      conf: document.getElementById("lodgingConf").value.trim(),
+      parking: document.getElementById("lodgingParking").value.trim()
+    };
+    save(KEYS.lodging, state.lodging);
+    const msg = document.getElementById("lodgingSavedMsg");
+    msg.textContent = "Saved ✓";
+    setTimeout(() => msg.textContent = "", 1200);
+  }
+
+  function addContact(){
+    const name = document.getElementById("cName").value.trim();
+    const type = document.getElementById("cType").value.trim();
+    const phone = document.getElementById("cPhone").value.trim();
+    if(!name || !type) return;
+    state.contacts.push({ id: Date.now(), name, type, phone, notes:"" });
+    save(KEYS.contacts, state.contacts);
+    document.getElementById("cName").value = "";
+    document.getElementById("cType").value = "";
+    document.getElementById("cPhone").value = "";
+    render();
+  }
+  function deleteContact(id){
+    state.contacts = state.contacts.filter(c => c.id !== id);
+    save(KEYS.contacts, state.contacts);
+    render();
+  }
+  function updateContactNotes(id, val){
+    state.contacts = state.contacts.map(c => c.id===id ? ({...c, notes: val}) : c);
+    save(KEYS.contacts, state.contacts);
+  }
+
+  function addItinerary(){
+    const date = document.getElementById("iDate").value;
+    const time = document.getElementById("iTime").value || "";
+    const event = document.getElementById("iEvent").value.trim();
+    if(!date || !event) return;
+    state.itinerary.push({ id: Date.now(), date, time, event });
+    save(KEYS.itinerary, state.itinerary);
+    document.getElementById("iTime").value = "";
+    document.getElementById("iEvent").value = "";
+    render();
+  }
+  function deleteItinerary(id){
+    state.itinerary = state.itinerary.filter(x => x.id !== id);
+    save(KEYS.itinerary, state.itinerary);
+    render();
+  }
+  function formatDateLabel(iso){
+    const d = new Date(iso + "T00:00:00");
+    const opts = { month:"short", day:"numeric" };
+    return d.toLocaleDateString(undefined, opts);
+  }
+
+  function addShopping(){
+    const item = document.getElementById("sItem").value.trim();
+    const qty = document.getElementById("sQty").value.trim();
+    const price = document.getElementById("sPrice").value.trim();
+    if(!item) return;
+    state.shopping.push({ id: Date.now(), item, qty, price: price ? parseFloat(price)||0 : "", purchased:false });
+    save(KEYS.shopping, state.shopping);
+    document.getElementById("sItem").value = "";
+    document.getElementById("sQty").value = "";
+    document.getElementById("sPrice").value = "";
+    render();
+  }
+  function togglePurchased(id){
+    state.shopping = state.shopping.map(s => s.id===id ? ({...s, purchased: !s.purchased}) : s);
+    save(KEYS.shopping, state.shopping);
+    render();
+  }
+  function deleteShopping(id){
+    state.shopping = state.shopping.filter(s => s.id !== id);
+    save(KEYS.shopping, state.shopping);
+    render();
+  }
+
+  function addPacking(){
+    const cat = (document.getElementById("pCat").value.trim() || "Other");
+    const item = document.getElementById("pItem").value.trim();
+    if(!item) return;
+    state.packing.push({ id: Date.now(), category: cat, item, packed:false });
+    save(KEYS.packing, state.packing);
+    document.getElementById("pItem").value = "";
+    render();
+  }
+  function togglePacked(id){
+    state.packing = state.packing.map(p => p.id===id ? ({...p, packed: !p.packed}) : p);
+    save(KEYS.packing, state.packing);
+    render();
+  }
+  function deletePacking(id){
+    state.packing = state.packing.filter(p => p.id !== id);
+    save(KEYS.packing, state.packing);
+    render();
+  }
+
+  function addIdea(){
+    const title = document.getElementById("xTitle").value.trim();
+    const link = document.getElementById("xLink").value.trim();
+    if(!title) return;
+    state.ideas.push({ id: Date.now(), title, link });
+    save(KEYS.ideas, state.ideas);
+    document.getElementById("xTitle").value = "";
+    document.getElementById("xLink").value = "";
+    render();
+  }
+  function deleteIdea(id){
+    state.ideas = state.ideas.filter(i => i.id !== id);
+    save(KEYS.ideas, state.ideas);
+    render();
+  }
+
+  function hydrateNotes(){
+    document.getElementById("notesText").value = state.notes || "";
+  }
+  function saveNotes(val){
+    state.notes = val;
+    save(KEYS.notes, val);
+  }
+
+  function renderChecklist(){
+    const sel = document.getElementById("newItemSection");
+    if(sel.options.length <= 1){
+      sections.forEach(s => sel.appendChild(el(`<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`)));
+    }
+
+    const addRow = document.getElementById("addChecklistRow");
+    if (addRow && !document.getElementById("newItemPriority")) {
+      const pri = el(`
+        <div id="newItemPriority" style="display:flex; gap:6px; align-items:center;">
+          <span class="priority-pill priority-high" data-val="high" role="button" tabindex="0">High</span>
+          <span class="priority-pill priority-medium" data-val="medium" role="button" tabindex="0">Medium</span>
+          <span class="priority-pill priority-low" data-val="low" role="button" tabindex="0">Low</span>
+        </div>
+      `);
+      addRow.insertBefore(pri, document.getElementById("addItemBtn"));
+      wireNewItemPriorityPills();
+    } else {
+      setNewItemPriorityUI(newItemPriority);
+    }
+
+    const total = getTotalProgress();
+    document.getElementById("prepProgressPct").textContent = total + "%";
+    document.getElementById("prepProgressBar").style.width = total + "%";
+    document.getElementById("prepProgressText").textContent =
+      `${state.items.filter(i=>i.done).length} of ${state.items.length} items completed`;
+
+    const root = document.getElementById("sectionsRoot");
+    root.innerHTML = "";
+
+    sections.forEach(sec => {
+      const list = state.items.filter(i => i.section === sec.name);
+      const progress = getProgress(sec.name);
+      const expanded = isExpanded(sec.name);
+
+      const card = el(`
+        <div class="card overflow-hidden">
+          <button class="section-header hover-bg" type="button">
+            <div class="section-left">
+              <span class="chev" aria-hidden="true">${expanded ? "▾" : "▸"}</span>
+              <div style="flex:1; text-align:left;">
+                <div class="section-title">${escapeHtml(sec.name)}</div>
+                <div class="items-center gap-3" style="display:flex; margin-top:10px;">
+                  <div class="w-full" style="background:#E5E7EB;border-radius:999px;overflow:hidden;height:8px;">
+                    <div style="height:8px; background:${sec.color}; width:${progress}%; border-radius:999px; transition:width .35s ease;"></div>
+                  </div>
+                  <span class="text-sm text-gray-600" style="min-width:48px">${progress}%</span>
+                </div>
+              </div>
+            </div>
+            <span class="badge" style="background:${sec.color}; color:${sec.textColor};">
+              ${list.filter(i=>i.done).length}/${list.length}
+            </span>
+          </button>
+
+          <div class="${expanded && list.length>0 ? "" : "hidden"} border-t" style="border-color:#F3F4F6">
+            ${list.map(i => `
+              <div class="row-item hover-bg">
+                <button class="icon-btn" data-action="toggle" data-id="${i.id}" title="Toggle complete" type="button">
+                  <span class="checkbox ${i.done ? "done" : ""}">${i.done ? "✓" : ""}</span>
+                </button>
+
+                <div class="row-text ${i.done ? "line-through text-gray-400" : "text-gray-700"}">
+                  ${escapeHtml(i.text)}
+                </div>
+
+                <span class="priority-pill priority-${escapeHtml(i.priority)}"
+                      data-action="priority"
+                      data-id="${i.id}"
+                      title="Click to change priority">
+                  ${escapeHtml(i.priority.charAt(0).toUpperCase() + i.priority.slice(1))}
+                </span>
+
+                <button class="icon-btn" data-action="delete" data-id="${i.id}" title="Delete" type="button">🗑️</button>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `);
+
+      card.querySelector(".section-header").addEventListener("click", () => toggleSection(sec.name));
+
+      card.querySelectorAll("[data-action='toggle']").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleItem(Number(btn.getAttribute("data-id")));
+        });
+      });
+
+      card.querySelectorAll("[data-action='priority']").forEach(pill => {
+        pill.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const id = Number(pill.getAttribute("data-id"));
+          const item = state.items.find(x => x.id === id);
+          if(!item) return;
+          setItemPriority(id, nextPriority(item.priority));
+        });
+      });
+
+      card.querySelectorAll("[data-action='delete']").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          deleteItem(Number(btn.getAttribute("data-id")));
+        });
+      });
+
+      root.appendChild(card);
+    });
+  }
+
+  function renderBudget(){
+    document.getElementById("totalBudgetInput").value = state.totalBudget ? String(state.totalBudget) : "";
+    const { spent, remaining, pct, barPct } = computeBudget();
+    document.getElementById("spentKpi").textContent = "$" + money(spent);
+
+    const remEl = document.getElementById("remainingKpi");
+    remEl.textContent = "$" + money(remaining);
+    remEl.classList.remove("good","bad");
+    remEl.classList.add(remaining < 0 ? "bad" : "good");
+
+    document.getElementById("pctKpi").textContent = pct + "%";
+
+    const bar = document.getElementById("budgetBar");
+    bar.style.width = barPct + "%";
+    bar.style.background = remaining < 0 ? "#DC2626" : "var(--rose)";
+
+    const body = document.getElementById("budgetBody");
+    body.innerHTML = "";
+    state.budget.forEach(b => {
+      const tr = el(`
+        <tr>
+          <td>${escapeHtml(b.category)}</td>
+          <td>${escapeHtml(b.item)}</td>
+          <td class="right">$${money(b.amount)}</td>
+          <td class="center"><input type="checkbox" ${b.paid ? "checked" : ""} /></td>
+          <td class="center"><button class="icon-btn" title="Delete" type="button">🗑️</button></td>
+        </tr>
+      `);
+      tr.querySelector("input").addEventListener("change", () => togglePaid(b.id));
+      tr.querySelector("button").addEventListener("click", () => deleteExpense(b.id));
+      body.appendChild(tr);
+    });
+  }
+
+  function renderLodgingAndContacts(){
+    hydrateLodging();
+    const root = document.getElementById("contactsRoot");
+    root.innerHTML = "";
+    state.contacts.forEach(c => {
+      const card = el(`
+        <div class="card p-4">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+            <div style="flex:1;">
+              <div class="font-semibold text-lg" style="color:var(--ink);">${escapeHtml(c.name)}</div>
+              <div class="text-sm text-gray-600">${escapeHtml(c.type)}</div>
+            </div>
+            <button class="icon-btn" title="Delete" type="button">🗑️</button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-sm mt-2">
+            <div><span class="font-semibold">Phone:</span> <span class="text-gray-700">${escapeHtml(c.phone || "")}</span></div>
+          </div>
+
+          <textarea rows="2" class="w-full mt-2" placeholder="Notes (hours, addresses, confirmation #, etc.)"
+            style="margin-top:10px;">${escapeHtml(c.notes || "")}</textarea>
+        </div>
+      `);
+      card.querySelector("button").addEventListener("click", () => deleteContact(c.id));
+      card.querySelector("textarea").addEventListener("input", (e) => updateContactNotes(c.id, e.target.value));
+      root.appendChild(card);
+    });
+  }
+
+  function renderItinerary(){
+    const body = document.getElementById("itineraryBody");
+    body.innerHTML = "";
+    const sorted = [...state.itinerary].sort((a,b) => {
+      const d = a.date.localeCompare(b.date);
+      if(d !== 0) return d;
+      return (a.time||"").localeCompare(b.time||"");
+    });
+    sorted.forEach(it => {
+      const tr = el(`
+        <tr>
+          <td>${escapeHtml(formatDateLabel(it.date))}</td>
+          <td>${escapeHtml(it.time || "")}</td>
+          <td>${escapeHtml(it.event)}</td>
+          <td class="center"><button class="icon-btn" title="Delete" type="button">🗑️</button></td>
+        </tr>
+      `);
+      tr.querySelector("button").addEventListener("click", () => deleteItinerary(it.id));
+      body.appendChild(tr);
+    });
+  }
+
+  function renderShopping(){
+    const root = document.getElementById("shoppingRoot");
+    root.innerHTML = "";
+    if(state.shopping.length === 0){
+      root.appendChild(el(`<div class="text-sm text-gray-600">No items yet.</div>`));
+      return;
+    }
+    state.shopping.forEach(s => {
+      const row = el(`
+        <div class="row-item hover-bg" style="border-bottom:1px solid #F3F4F6;">
+          <input type="checkbox" style="width:18px;height:18px;" ${s.purchased ? "checked" : ""} />
+          <div class="row-text ${s.purchased ? "line-through text-gray-400" : ""}">
+            <div class="text-sm" style="font-weight:800;">${escapeHtml(s.item)} ${s.qty ? `<span class="text-gray-600" style="font-weight:700;">(${escapeHtml(s.qty)})</span>` : ""}</div>
+            ${s.price !== "" && s.price !== null && s.price !== undefined ? `<div class="text-xs text-gray-600">Est. $${money(s.price)}</div>` : ""}
+          </div>
+          <button class="icon-btn" title="Delete" type="button">🗑️</button>
+        </div>
+      `);
+      row.querySelector("input").addEventListener("change", () => togglePurchased(s.id));
+      row.querySelector("button").addEventListener("click", () => deleteShopping(s.id));
+      root.appendChild(row);
+    });
+  }
+
+  function renderPacking(){
+    const root = document.getElementById("packingRoot");
+    root.innerHTML = "";
+    if(state.packing.length === 0){
+      root.appendChild(el(`<div class="text-sm text-gray-600">No items yet.</div>`));
+      return;
+    }
+
+    const grouped = {};
+    state.packing.forEach(p => {
+      const cat = p.category || "Other";
+      if(!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(p);
+    });
+
+    Object.entries(grouped).forEach(([cat, items]) => {
+      const block = el(`
+        <div class="card p-4 mb-4">
+          <div class="font-semibold text-lg" style="color:var(--ink); margin:0 0 10px;">${escapeHtml(cat)}</div>
+          <div>
+            ${items.map(i => `
+              <div class="row-item hover-bg">
+                <input type="checkbox" style="width:18px;height:18px;" ${i.packed ? "checked" : ""} />
+                <div class="row-text ${i.packed ? "line-through text-gray-400" : ""}">
+                  ${escapeHtml(i.item)}
+                </div>
+                <button class="icon-btn" title="Delete" type="button">🗑️</button>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `);
+
+      const checkboxes = block.querySelectorAll("input[type='checkbox']");
+      checkboxes.forEach((cb, idx) => cb.addEventListener("change", () => togglePacked(items[idx].id)));
+
+      const delBtns = block.querySelectorAll("button");
+      delBtns.forEach((btn, idx) => btn.addEventListener("click", () => deletePacking(items[idx].id)));
+
+      root.appendChild(block);
+    });
+  }
+
+  function renderIdeas(){
+    const root = document.getElementById("ideasRoot");
+    root.innerHTML = "";
+    if(state.ideas.length === 0){
+      root.appendChild(el(`<div class="text-sm text-gray-600">No ideas saved yet.</div>`));
+      return;
+    }
+    state.ideas.forEach(i => {
+      const hasHttp = (i.link || "").startsWith("http");
+      const card = el(`
+        <div class="card p-3">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+            <div style="flex:1;">
+              <div class="font-semibold text-sm" style="color:var(--ink);">${escapeHtml(i.title)}</div>
+              ${i.link ? (
+                hasHttp
+                  ? `<a href="${escapeHtml(i.link)}" target="_blank" rel="noopener noreferrer" class="text-xs" style="color:#2563EB;word-break:break-all;">${escapeHtml(i.link)}</a>`
+                  : `<div class="text-xs text-gray-600" style="word-break:break-all;">${escapeHtml(i.link)}</div>`
+              ) : ""}
+            </div>
+            <button class="icon-btn" title="Delete" type="button">🗑️</button>
+          </div>
+        </div>
+      `);
+      card.querySelector("button").addEventListener("click", () => deleteIdea(i.id));
+      root.appendChild(card);
+    });
+  }
+
+  function renderNotes(){
+    document.getElementById("notesText").value = state.notes || "";
+  }
+
+  function render(){
+    renderTabs();
+    renderChecklist();
+    renderBudget();
+    renderLodgingAndContacts();
+    renderItinerary();
+    renderShopping();
+    renderPacking();
+    renderIdeas();
+    renderNotes();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    load();
+    render();
+
+    document.getElementById("addItemBtn").addEventListener("click", addNewItem);
+    document.getElementById("newItemText").addEventListener("keydown", (e) => { if(e.key === "Enter") addNewItem(); });
+
+    document.getElementById("bAdd").addEventListener("click", addExpense);
+    document.getElementById("totalBudgetInput").addEventListener("input", (e) => {
+      state.totalBudget = parseFloat(e.target.value) || 0;
+      save(KEYS.totalBudget, String(state.totalBudget));
+      renderBudget();
+    });
+
+    document.getElementById("saveLodgingBtn").addEventListener("click", saveLodging);
+
+    document.getElementById("cAdd").addEventListener("click", addContact);
+
+    document.getElementById("iAdd").addEventListener("click", addItinerary);
+
+    document.getElementById("sAdd").addEventListener("click", addShopping);
+
+    document.getElementById("pAdd").addEventListener("click", addPacking);
+
+    document.getElementById("xAdd").addEventListener("click", addIdea);
+
+    document.getElementById("notesText").addEventListener("input", (e) => saveNotes(e.target.value));
+  });
+  </script>
+</body>
+</html>
