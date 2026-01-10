@@ -408,7 +408,11 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4" style="margin-top:14px;">
+        <div class="grid grid-cols-4 gap-4" style="margin-top:14px;">
+          <div class="kpi">
+            <div class="label">Planned</div>
+            <div class="value" id="plannedKpi">$0.00</div>
+          </div>
           <div class="kpi">
             <div class="label">Spent</div>
             <div class="value" id="spentKpi">$0.00</div>
@@ -418,7 +422,7 @@
             <div class="value good" id="remainingKpi">$0.00</div>
           </div>
           <div class="kpi">
-            <div class="label">% Used</div>
+            <div class="label">Percent Used</div>
             <div class="value" id="pctKpi">0%</div>
           </div>
         </div>
@@ -568,7 +572,11 @@
             <h3 class="font-semibold" style="color:var(--ink); margin:0 0 6px;">Suggested from itinerary</h3>
             <p class="text-sm text-gray-600" style="margin:0;">Based on the events you have planned.</p>
           </div>
-          <span id="packingSuggestionsCount" class="text-sm text-gray-500"></span>
+          <div class="inline-flex items-center gap-2">
+            <button id="packingSuggestBtn" class="btn-primary text-sm" type="button">Suggest packing from itinerary</button>
+            <button id="packingSuggestionsReset" class="text-sm text-gray-500" type="button">Reset suggestions</button>
+            <span id="packingSuggestionsCount" class="text-sm text-gray-500"></span>
+          </div>
         </div>
         <div id="packingSuggestionsRoot" class="mt-4"></div>
       </div>
@@ -579,19 +587,105 @@
     <section id="tab-ideas" class="hidden">
       <div class="mb-6 p-6 card">
         <h2 class="text-xl font-semibold" style="color:var(--ink); margin:0 0 6px;">Ideas &amp; Inspiration</h2>
-        <p class="text-sm text-gray-600" style="margin:0;">Save links, spots, hikes, restaurants, viewpoints, etc.</p>
+        <p class="text-sm text-gray-600" style="margin:0;">Capture everything you might want to do in Gatlinburg + the Smokies.</p>
+      </div>
+
+      <div class="mb-6 p-4 card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap;">
+          <div>
+            <h3 class="font-semibold" style="color:var(--ink); margin:0 0 6px;">Search &amp; Filter</h3>
+            <p class="text-sm text-gray-600" style="margin:0;">Filter by type, area, priority, and weather.</p>
+          </div>
+          <input id="ideaSearch" placeholder="Search ideas by name or notes" style="min-width:240px;" />
+        </div>
+        <div class="grid grid-cols-4 gap-2 mt-4">
+          <select id="ideaFilterType">
+            <option value="">All types</option>
+            <option>Outdoors</option>
+            <option>Scenic</option>
+            <option>Attraction</option>
+            <option>Food</option>
+            <option>Shopping</option>
+            <option>Relax</option>
+            <option>Day Trip</option>
+            <option>Other</option>
+          </select>
+          <select id="ideaFilterArea">
+            <option value="">All areas</option>
+            <option>Gatlinburg</option>
+            <option>Pigeon Forge</option>
+            <option>Smoky Mountains NP</option>
+            <option>Sevierville</option>
+            <option>Other</option>
+          </select>
+          <select id="ideaFilterPriority">
+            <option value="">All priorities</option>
+            <option>Must</option>
+            <option>Maybe</option>
+            <option>If time</option>
+          </select>
+          <select id="ideaFilterWeather">
+            <option value="">All weather</option>
+            <option>Any</option>
+            <option>Outdoor-only</option>
+            <option>Rain-friendly</option>
+          </select>
+        </div>
       </div>
 
       <div class="mb-6 p-4 card">
         <h3 class="font-semibold" style="color:var(--ink); margin:0 0 12px;">Add Idea</h3>
         <div class="grid grid-cols-3 gap-2">
-          <input id="xTitle" placeholder="Title" />
-          <input id="xLink" placeholder="Link or note" />
-          <button id="xAdd" class="btn-primary" type="button">Add</button>
+          <input id="ideaName" placeholder="Idea name (required)" />
+          <select id="ideaType">
+            <option>Outdoors</option>
+            <option>Scenic</option>
+            <option>Attraction</option>
+            <option>Food</option>
+            <option>Shopping</option>
+            <option>Relax</option>
+            <option>Day Trip</option>
+            <option>Other</option>
+          </select>
+          <select id="ideaArea">
+            <option>Gatlinburg</option>
+            <option>Pigeon Forge</option>
+            <option>Smoky Mountains NP</option>
+            <option>Sevierville</option>
+            <option>Other</option>
+          </select>
+          <select id="ideaTimeNeeded">
+            <option>Quick</option>
+            <option>1–2 hours</option>
+            <option>Half day</option>
+            <option>Full day</option>
+          </select>
+          <select id="ideaCostLevel">
+            <option>Free</option>
+            <option>$</option>
+            <option>$$</option>
+            <option>$$$</option>
+          </select>
+          <select id="ideaPriority">
+            <option>Must</option>
+            <option>Maybe</option>
+            <option>If time</option>
+          </select>
+          <select id="ideaWeather">
+            <option>Any</option>
+            <option>Outdoor-only</option>
+            <option>Rain-friendly</option>
+          </select>
+          <input id="ideaEstCost" type="number" step="0.01" placeholder="Estimated cost (optional)" />
+          <input id="ideaLink" placeholder="Link (optional)" />
+          <textarea id="ideaNotes" rows="2" placeholder="Notes (optional)" class="w-full"></textarea>
+        </div>
+        <div class="mt-4">
+          <button id="ideaAddBtn" class="btn-primary" type="button">Add Idea</button>
         </div>
       </div>
 
-      <div id="ideasRoot" style="display:flex; flex-direction:column; gap:10px;"></div>
+      <div id="ideasRoot" style="display:flex; flex-direction:column; gap:12px;"></div>
     </section>
 
     <section id="tab-notes" class="hidden">
@@ -692,40 +786,52 @@
 
   const PACKING_SUGGESTION_RULES = [
     {
-      id: "outdoors",
-      label: "Outdoor adventures",
-      keywords: ["hike", "trail", "scenic", "smokies", "outdoor", "mountain"],
+      id: "hiking",
+      label: "Hiking days",
+      keywords: ["hike", "trail", "smokies", "national park"],
       items: [
         { item: "Hiking shoes", category: "Clothing" },
-        { item: "Reusable water bottle", category: "Misc" },
-        { item: "Bug spray", category: "Toiletries" }
-      ]
-    },
-    {
-      id: "evening",
-      label: "Date night",
-      keywords: ["dinner", "date night", "restaurant", "cozy"],
-      items: [
-        { item: "Dressy outfit", category: "Clothing" },
-        { item: "Nice shoes", category: "Clothing" }
+        { item: "Bug spray", category: "Toiletries" },
+        { item: "Water bottle", category: "Misc" },
+        { item: "Light rain jacket", category: "Clothing" }
       ]
     },
     {
       id: "relax",
-      label: "Relaxation",
-      keywords: ["spa", "hot tub", "pool", "relax"],
+      label: "Hot tub time",
+      keywords: ["hot tub", "spa", "pool"],
       items: [
         { item: "Swimsuit", category: "Clothing" },
-        { item: "Flip flops", category: "Clothing" }
+        { item: "Sandals", category: "Clothing" },
+        { item: "Hair tie", category: "Toiletries" }
+      ]
+    },
+    {
+      id: "date-night",
+      label: "Date nights",
+      keywords: ["dinner", "reservation", "date night"],
+      items: [
+        { item: "Nice outfit", category: "Clothing" },
+        { item: "Nicer shoes", category: "Clothing" }
       ]
     },
     {
       id: "drive",
-      label: "Road trip",
+      label: "Driving days",
       keywords: ["drive", "road trip", "scenic drive", "arrival", "check-in", "checkout"],
       items: [
         { item: "Car charger", category: "Tech" },
-        { item: "Snacks for the car", category: "Misc" }
+        { item: "Sunglasses", category: "Misc" },
+        { item: "Snacks", category: "Misc" }
+      ]
+    },
+    {
+      id: "rain",
+      label: "Rainy-day plans",
+      keywords: ["rain", "aquarium", "museum"],
+      items: [
+        { item: "Compact umbrella", category: "Misc" },
+        { item: "Light waterproof layer", category: "Clothing" }
       ]
     }
   ];
@@ -742,6 +848,7 @@
     shopping: [],
     packing: [],
     packingDismissed: [],
+    packingSuggestionActive: false,
     ideas: [],
     notes: ""
   };
@@ -760,6 +867,15 @@
     return t.content.firstElementChild;
   }
   function money(n){ return (Number(n)||0).toFixed(2); }
+  function makeId(){
+    if(window.crypto && typeof window.crypto.randomUUID === "function"){
+      return window.crypto.randomUUID();
+    }
+    return `idea-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  }
+  function normalizePackingKey(category, item){
+    return `${(category || "other").trim().toLowerCase()}::${(item || "").trim().toLowerCase()}`;
+  }
 
   let newItemPriority = "medium";
 
@@ -817,7 +933,16 @@
 
     try{
       const bud = localStorage.getItem(KEYS.budget);
-      state.budget = bud ? JSON.parse(bud) : [];
+      const parsed = bud ? JSON.parse(bud) : [];
+      state.budget = Array.isArray(parsed) ? parsed.map(item => ({
+        id: item.id ?? Date.now(),
+        category: item.category ?? item.cat ?? "",
+        item: item.item ?? item.desc ?? "",
+        amount: parseFloat(item.amount) || 0,
+        paid: !!item.paid,
+        source: item.source,
+        ideaId: item.ideaId
+      })) : [];
     }catch(e){ state.budget = []; }
 
     state.totalBudget = parseFloat(localStorage.getItem(KEYS.totalBudget) || "0") || 0;
@@ -854,7 +979,21 @@
 
     try{
       const i = localStorage.getItem(KEYS.ideas);
-      state.ideas = i ? JSON.parse(i) : [];
+      const parsed = i ? JSON.parse(i) : [];
+      state.ideas = Array.isArray(parsed) ? parsed.map(idea => ({
+        id: idea.id || makeId(),
+        name: idea.name || idea.title || "",
+        type: idea.type || "Other",
+        area: idea.area || "Other",
+        timeNeeded: idea.timeNeeded || "Quick",
+        costLevel: idea.costLevel || "Free",
+        priority: idea.priority || "Maybe",
+        weather: idea.weather || "Any",
+        estCost: typeof idea.estCost === "number" ? idea.estCost : (idea.estCost ? parseFloat(idea.estCost) : ""),
+        notes: idea.notes || "",
+        link: idea.link || "",
+        createdAt: idea.createdAt || Date.now()
+      })).filter(idea => idea.name.trim() !== "") : [];
     }catch(e){ state.ideas = []; }
 
     state.notes = localStorage.getItem(KEYS.notes) || "";
@@ -956,11 +1095,14 @@
   }
 
   function computeBudget(){
-    const spent = state.budget.reduce((s,it)=> s + (parseFloat(it.amount)||0), 0);
-    const remaining = (state.totalBudget||0) - spent;
-    const pct = state.totalBudget > 0 ? Math.round((spent/state.totalBudget)*100) : 0;
-    const barPct = state.totalBudget > 0 ? Math.min((spent/state.totalBudget)*100, 100) : 0;
-    return { spent, remaining, pct, barPct };
+    const planned = state.budget.reduce((s,it)=> s + (parseFloat(it.amount)||0), 0);
+    const spent = state.budget.reduce((s,it)=> s + (it.paid ? (parseFloat(it.amount)||0) : 0), 0);
+    const totalBudget = Number(state.totalBudget) || 0;
+    const remaining = totalBudget - spent;
+    const pctRaw = totalBudget > 0 ? (spent / totalBudget) * 100 : 0;
+    const pctDisplay = totalBudget > 0 ? Math.min(Math.max(Math.round(pctRaw), 0), 999) : 0;
+    const barPct = totalBudget > 0 ? Math.min(Math.max(pctRaw, 0), 100) : 0;
+    return { planned, spent, remaining, pctDisplay, barPct };
   }
   function addExpense(){
     const cat = document.getElementById("bCat").value.trim();
@@ -1100,21 +1242,104 @@
     save(KEYS.packing, state.packing);
     render();
   }
+  function enablePackingSuggestions(){
+    state.packingSuggestionActive = true;
+    renderPackingSuggestions();
+  }
+  function resetPackingSuggestions(){
+    state.packingDismissed = [];
+    save(KEYS.packingDismissed, state.packingDismissed);
+    renderPackingSuggestions();
+  }
 
   function addIdea(){
-    const title = document.getElementById("xTitle").value.trim();
-    const link = document.getElementById("xLink").value.trim();
-    if(!title) return;
-    state.ideas.push({ id: Date.now(), title, link });
+    const name = document.getElementById("ideaName").value.trim();
+    const type = document.getElementById("ideaType").value;
+    const area = document.getElementById("ideaArea").value;
+    const timeNeeded = document.getElementById("ideaTimeNeeded").value;
+    const costLevel = document.getElementById("ideaCostLevel").value;
+    const priority = document.getElementById("ideaPriority").value;
+    const weather = document.getElementById("ideaWeather").value;
+    const estCostRaw = document.getElementById("ideaEstCost").value.trim();
+    const link = document.getElementById("ideaLink").value.trim();
+    const notes = document.getElementById("ideaNotes").value.trim();
+    if(!name) return;
+
+    const duplicate = state.ideas.find(idea =>
+      (idea.name || "").trim().toLowerCase() === name.toLowerCase() &&
+      (idea.area || "").trim().toLowerCase() === area.toLowerCase()
+    );
+    if(duplicate){
+      const confirmDup = window.confirm("An idea with the same name and area already exists. Add anyway?");
+      if(!confirmDup) return;
+    }
+
+    const idea = {
+      id: makeId(),
+      name,
+      type,
+      area,
+      timeNeeded,
+      costLevel,
+      priority,
+      weather,
+      estCost: estCostRaw ? parseFloat(estCostRaw) || "" : "",
+      notes,
+      link,
+      createdAt: Date.now()
+    };
+
+    state.ideas.push(idea);
     save(KEYS.ideas, state.ideas);
-    document.getElementById("xTitle").value = "";
-    document.getElementById("xLink").value = "";
+
+    document.getElementById("ideaName").value = "";
+    document.getElementById("ideaEstCost").value = "";
+    document.getElementById("ideaLink").value = "";
+    document.getElementById("ideaNotes").value = "";
     render();
   }
   function deleteIdea(id){
     state.ideas = state.ideas.filter(i => i.id !== id);
     save(KEYS.ideas, state.ideas);
     render();
+  }
+  function mapIdeaCategory(type){
+    const normalized = (type || "").toLowerCase();
+    if(normalized === "food") return "Food";
+    if(["outdoors","scenic","attraction","day trip"].includes(normalized)) return "Activities";
+    if(normalized === "shopping") return "Shopping";
+    return "Misc";
+  }
+  function addIdeaToBudget(idea){
+    if(!idea || !Number.isFinite(idea.estCost) || idea.estCost <= 0) return;
+    const exists = state.budget.some(b => b.ideaId === idea.id);
+    if(exists){
+      window.alert("This idea already exists in the budget.");
+      return;
+    }
+    state.budget.push({
+      id: Date.now(),
+      category: mapIdeaCategory(idea.type),
+      item: idea.name,
+      amount: idea.estCost,
+      paid: false,
+      source: "idea",
+      ideaId: idea.id
+    });
+    save(KEYS.budget, state.budget);
+    renderBudget();
+  }
+  function addIdeaToItinerary(idea){
+    const defaultDate = "2026-05-04";
+    const date = window.prompt("Add to itinerary — date (YYYY-MM-DD)", defaultDate);
+    if(!date) return;
+    const time = window.prompt("Time (optional, HH:MM)", "") || "";
+    let event = `[Idea] ${idea.name}`;
+    if(idea.area) event += ` — ${idea.area}`;
+    if(idea.link) event += ` (link: ${idea.link})`;
+    state.itinerary.push({ id: Date.now(), date, time, event });
+    save(KEYS.itinerary, state.itinerary);
+    setActiveTab("itinerary");
   }
 
   function hydrateNotes(){
@@ -1237,7 +1462,8 @@
 
   function renderBudget(){
     document.getElementById("totalBudgetInput").value = state.totalBudget ? String(state.totalBudget) : "";
-    const { spent, remaining, pct, barPct } = computeBudget();
+    const { planned, spent, remaining, pctDisplay, barPct } = computeBudget();
+    document.getElementById("plannedKpi").textContent = "$" + money(planned);
     document.getElementById("spentKpi").textContent = "$" + money(spent);
 
     const remEl = document.getElementById("remainingKpi");
@@ -1245,7 +1471,7 @@
     remEl.classList.remove("good","bad");
     remEl.classList.add(remaining < 0 ? "bad" : "good");
 
-    document.getElementById("pctKpi").textContent = pct + "%";
+    document.getElementById("pctKpi").textContent = pctDisplay + "%";
 
     const bar = document.getElementById("budgetBar");
     bar.style.width = barPct + "%";
@@ -1390,7 +1616,7 @@
 
   function getPackingSuggestions(){
     const dismissed = new Set(state.packingDismissed || []);
-    const existing = new Set(state.packing.map(p => (p.item || "").toLowerCase()));
+    const existing = new Set(state.packing.map(p => normalizePackingKey(p.category, p.item)));
     const suggestions = [];
     const seen = new Set();
     state.itinerary.forEach(it => {
@@ -1399,9 +1625,9 @@
       PACKING_SUGGESTION_RULES.forEach(rule => {
         if(!rule.keywords.some(keyword => text.includes(keyword))) return;
         rule.items.forEach(item => {
-          const itemName = (item.item || "").toLowerCase();
-          const suggestionId = `${rule.id}:${itemName}`;
-          if(!itemName || dismissed.has(suggestionId) || existing.has(itemName) || seen.has(suggestionId)) return;
+          const normalizedKey = normalizePackingKey(item.category, item.item);
+          const suggestionId = `${rule.id}:${normalizedKey}`;
+          if(!normalizedKey || dismissed.has(suggestionId) || existing.has(normalizedKey) || seen.has(suggestionId)) return;
           suggestions.push({
             id: suggestionId,
             item: item.item,
@@ -1418,7 +1644,18 @@
   function renderPackingSuggestions(){
     const wrap = document.getElementById("packingSuggestionsRoot");
     const countEl = document.getElementById("packingSuggestionsCount");
+    const resetBtn = document.getElementById("packingSuggestionsReset");
     if(!wrap || !countEl) return;
+    if(resetBtn){
+      resetBtn.disabled = (state.packingDismissed || []).length === 0;
+      resetBtn.style.opacity = resetBtn.disabled ? "0.5" : "1";
+    }
+    if(!state.packingSuggestionActive){
+      countEl.textContent = "";
+      wrap.innerHTML = "";
+      wrap.appendChild(el(`<div class="text-sm text-gray-600">Click “Suggest packing from itinerary” to see ideas.</div>`));
+      return;
+    }
     const suggestions = getPackingSuggestions();
     countEl.textContent = suggestions.length
       ? `${suggestions.length} suggestion${suggestions.length > 1 ? "s" : ""}`
@@ -1461,28 +1698,71 @@
   function renderIdeas(){
     const root = document.getElementById("ideasRoot");
     root.innerHTML = "";
-    if(state.ideas.length === 0){
-      root.appendChild(el(`<div class="text-sm text-gray-600">No ideas saved yet.</div>`));
+    const search = (document.getElementById("ideaSearch")?.value || "").trim().toLowerCase();
+    const typeFilter = document.getElementById("ideaFilterType")?.value || "";
+    const areaFilter = document.getElementById("ideaFilterArea")?.value || "";
+    const priorityFilter = document.getElementById("ideaFilterPriority")?.value || "";
+    const weatherFilter = document.getElementById("ideaFilterWeather")?.value || "";
+
+    const priorityRank = { "Must": 0, "Maybe": 1, "If time": 2 };
+    const filtered = state.ideas.filter(idea => {
+      if(typeFilter && idea.type !== typeFilter) return false;
+      if(areaFilter && idea.area !== areaFilter) return false;
+      if(priorityFilter && idea.priority !== priorityFilter) return false;
+      if(weatherFilter && idea.weather !== weatherFilter) return false;
+      if(search){
+        const hay = `${idea.name} ${idea.notes}`.toLowerCase();
+        if(!hay.includes(search)) return false;
+      }
+      return true;
+    }).sort((a,b) => {
+      const pri = (priorityRank[a.priority] ?? 99) - (priorityRank[b.priority] ?? 99);
+      if(pri !== 0) return pri;
+      return (b.createdAt || 0) - (a.createdAt || 0);
+    });
+
+    if(filtered.length === 0){
+      const msg = state.ideas.length === 0
+        ? "No ideas saved yet."
+        : "No ideas match your filters.";
+      root.appendChild(el(`<div class="text-sm text-gray-600">${escapeHtml(msg)}</div>`));
       return;
     }
-    state.ideas.forEach(i => {
-      const hasHttp = (i.link || "").startsWith("http");
+    filtered.forEach(idea => {
+      const hasHttp = (idea.link || "").startsWith("http");
+      const hasCost = Number.isFinite(idea.estCost) && idea.estCost > 0;
       const card = el(`
-        <div class="card p-3">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
-            <div style="flex:1;">
-              <div class="font-semibold text-sm" style="color:var(--ink);">${escapeHtml(i.title)}</div>
-              ${i.link ? (
+        <div class="card p-4">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:220px;">
+              <div class="font-semibold text-lg" style="color:var(--ink);">${escapeHtml(idea.name)}</div>
+              <div class="text-xs text-gray-600" style="margin-top:4px;">
+                ${escapeHtml(idea.type)} · ${escapeHtml(idea.area)} · ${escapeHtml(idea.timeNeeded)} · ${escapeHtml(idea.costLevel)} · ${escapeHtml(idea.priority)} · ${escapeHtml(idea.weather)}
+              </div>
+              ${idea.notes ? `<div class="text-sm text-gray-600" style="margin-top:6px;">${escapeHtml(idea.notes)}</div>` : ""}
+              ${idea.link ? (
                 hasHttp
-                  ? `<a href="${escapeHtml(i.link)}" target="_blank" rel="noopener noreferrer" class="text-xs" style="color:#2563EB;word-break:break-all;">${escapeHtml(i.link)}</a>`
-                  : `<div class="text-xs text-gray-600" style="word-break:break-all;">${escapeHtml(i.link)}</div>`
+                  ? `<a href="${escapeHtml(idea.link)}" target="_blank" rel="noopener noreferrer" class="text-xs" style="color:#2563EB;word-break:break-all;">${escapeHtml(idea.link)}</a>`
+                  : `<div class="text-xs text-gray-600" style="word-break:break-all;">${escapeHtml(idea.link)}</div>`
               ) : ""}
+              ${hasCost ? `<div class="text-xs text-gray-600" style="margin-top:6px;">Estimated: $${money(idea.estCost)}</div>` : ""}
             </div>
-            <button class="icon-btn" title="Delete" type="button">🗑️</button>
+            <div class="inline-flex items-center gap-2">
+              <button class="btn-primary text-sm" type="button">Add to Itinerary</button>
+              <button class="btn-primary text-sm" type="button" ${hasCost ? "" : "disabled"}>Add to Budget</button>
+              <button class="icon-btn" title="Delete" type="button">🗑️</button>
+            </div>
           </div>
         </div>
       `);
-      card.querySelector("button").addEventListener("click", () => deleteIdea(i.id));
+      const buttons = card.querySelectorAll("button");
+      buttons[0].addEventListener("click", () => addIdeaToItinerary(idea));
+      buttons[1].addEventListener("click", () => addIdeaToBudget(idea));
+      if(!hasCost){
+        buttons[1].style.opacity = "0.5";
+        buttons[1].style.cursor = "not-allowed";
+      }
+      buttons[2].addEventListener("click", () => deleteIdea(idea.id));
       root.appendChild(card);
     });
   }
@@ -1527,7 +1807,16 @@
 
     document.getElementById("pAdd").addEventListener("click", addPacking);
 
-    document.getElementById("xAdd").addEventListener("click", addIdea);
+    document.getElementById("packingSuggestBtn").addEventListener("click", enablePackingSuggestions);
+    document.getElementById("packingSuggestionsReset").addEventListener("click", resetPackingSuggestions);
+
+    document.getElementById("ideaAddBtn").addEventListener("click", addIdea);
+    ["ideaSearch","ideaFilterType","ideaFilterArea","ideaFilterPriority","ideaFilterWeather"].forEach(id => {
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.addEventListener("input", renderIdeas);
+      el.addEventListener("change", renderIdeas);
+    });
 
     document.getElementById("notesText").addEventListener("input", (e) => saveNotes(e.target.value));
   });
