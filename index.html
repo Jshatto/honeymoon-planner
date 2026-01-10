@@ -562,6 +562,17 @@
         </div>
       </div>
 
+      <div class="mb-6 p-4 card" id="packingSuggestionsCard">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
+          <div>
+            <h3 class="font-semibold" style="color:var(--ink); margin:0 0 6px;">Suggested from itinerary</h3>
+            <p class="text-sm text-gray-600" style="margin:0;">Based on the events you have planned.</p>
+          </div>
+          <span id="packingSuggestionsCount" class="text-sm text-gray-500"></span>
+        </div>
+        <div id="packingSuggestionsRoot" class="mt-4"></div>
+      </div>
+
       <div class="card p-3" id="packingRoot"></div>
     </section>
 
@@ -607,6 +618,7 @@
     itinerary: "honeymoon-itinerary",
     shopping: "honeymoon-shopping",
     packing: "honeymoon-packing",
+    packingDismissed: "honeymoon-packing-dismissed",
     ideas: "honeymoon-ideas",
     notes: "honeymoon-notes"
   };
@@ -678,6 +690,46 @@
     { id: 6, category: "Misc", item: "Sunglasses / sunscreen", packed: false }
   ];
 
+  const PACKING_SUGGESTION_RULES = [
+    {
+      id: "outdoors",
+      label: "Outdoor adventures",
+      keywords: ["hike", "trail", "scenic", "smokies", "outdoor", "mountain"],
+      items: [
+        { item: "Hiking shoes", category: "Clothing" },
+        { item: "Reusable water bottle", category: "Misc" },
+        { item: "Bug spray", category: "Toiletries" }
+      ]
+    },
+    {
+      id: "evening",
+      label: "Date night",
+      keywords: ["dinner", "date night", "restaurant", "cozy"],
+      items: [
+        { item: "Dressy outfit", category: "Clothing" },
+        { item: "Nice shoes", category: "Clothing" }
+      ]
+    },
+    {
+      id: "relax",
+      label: "Relaxation",
+      keywords: ["spa", "hot tub", "pool", "relax"],
+      items: [
+        { item: "Swimsuit", category: "Clothing" },
+        { item: "Flip flops", category: "Clothing" }
+      ]
+    },
+    {
+      id: "drive",
+      label: "Road trip",
+      keywords: ["drive", "road trip", "scenic drive", "arrival", "check-in", "checkout"],
+      items: [
+        { item: "Car charger", category: "Tech" },
+        { item: "Snacks for the car", category: "Misc" }
+      ]
+    }
+  ];
+
   const state = {
     activeTab: "checklist",
     items: [],
@@ -689,6 +741,7 @@
     itinerary: [],
     shopping: [],
     packing: [],
+    packingDismissed: [],
     ideas: [],
     notes: ""
   };
@@ -788,6 +841,11 @@
       const s = localStorage.getItem(KEYS.shopping);
       state.shopping = s ? JSON.parse(s) : [];
     }catch(e){ state.shopping = []; }
+
+    try{
+      const d = localStorage.getItem(KEYS.packingDismissed);
+      state.packingDismissed = d ? JSON.parse(d) : [];
+    }catch(e){ state.packingDismissed = []; }
 
     try{
       const p = localStorage.getItem(KEYS.packing);
@@ -1017,12 +1075,18 @@
     render();
   }
 
+  function addPackingItem(item, category){
+    const trimmedItem = (item || "").trim();
+    if(!trimmedItem) return;
+    const cat = (category || "Other").trim() || "Other";
+    state.packing.push({ id: Date.now(), category: cat, item: trimmedItem, packed:false });
+    save(KEYS.packing, state.packing);
+  }
   function addPacking(){
-    const cat = (document.getElementById("pCat").value.trim() || "Other");
+    const cat = document.getElementById("pCat").value.trim() || "Other";
     const item = document.getElementById("pItem").value.trim();
     if(!item) return;
-    state.packing.push({ id: Date.now(), category: cat, item, packed:false });
-    save(KEYS.packing, state.packing);
+    addPackingItem(item, cat);
     document.getElementById("pItem").value = "";
     render();
   }
@@ -1281,6 +1345,7 @@
   }
 
   function renderPacking(){
+    renderPackingSuggestions();
     const root = document.getElementById("packingRoot");
     root.innerHTML = "";
     if(state.packing.length === 0){
@@ -1320,6 +1385,76 @@
       delBtns.forEach((btn, idx) => btn.addEventListener("click", () => deletePacking(items[idx].id)));
 
       root.appendChild(block);
+    });
+  }
+
+  function getPackingSuggestions(){
+    const dismissed = new Set(state.packingDismissed || []);
+    const existing = new Set(state.packing.map(p => (p.item || "").toLowerCase()));
+    const suggestions = [];
+    const seen = new Set();
+    state.itinerary.forEach(it => {
+      const text = (it.event || "").toLowerCase();
+      if(!text) return;
+      PACKING_SUGGESTION_RULES.forEach(rule => {
+        if(!rule.keywords.some(keyword => text.includes(keyword))) return;
+        rule.items.forEach(item => {
+          const itemName = (item.item || "").toLowerCase();
+          const suggestionId = `${rule.id}:${itemName}`;
+          if(!itemName || dismissed.has(suggestionId) || existing.has(itemName) || seen.has(suggestionId)) return;
+          suggestions.push({
+            id: suggestionId,
+            item: item.item,
+            category: item.category || "Other",
+            reason: rule.label
+          });
+          seen.add(suggestionId);
+        });
+      });
+    });
+    return suggestions;
+  }
+
+  function renderPackingSuggestions(){
+    const wrap = document.getElementById("packingSuggestionsRoot");
+    const countEl = document.getElementById("packingSuggestionsCount");
+    if(!wrap || !countEl) return;
+    const suggestions = getPackingSuggestions();
+    countEl.textContent = suggestions.length
+      ? `${suggestions.length} suggestion${suggestions.length > 1 ? "s" : ""}`
+      : "";
+    wrap.innerHTML = "";
+    if(suggestions.length === 0){
+      wrap.appendChild(el(`<div class="text-sm text-gray-600">No suggestions right now.</div>`));
+      return;
+    }
+
+    suggestions.forEach(suggestion => {
+      const row = el(`
+        <div class="row-item hover-bg" style="border-bottom:1px solid #F3F4F6;">
+          <div class="row-text">
+            <div class="text-sm" style="font-weight:800;">${escapeHtml(suggestion.item)}</div>
+            <div class="text-xs text-gray-600">Suggested for ${escapeHtml(suggestion.reason || "this plan")}</div>
+          </div>
+          <div class="inline-flex items-center gap-2">
+            <button class="btn-primary text-sm" type="button">Add</button>
+            <button class="text-sm text-gray-500" type="button">Dismiss</button>
+          </div>
+        </div>
+      `);
+      const [addBtn, dismissBtn] = row.querySelectorAll("button");
+      addBtn.addEventListener("click", () => {
+        addPackingItem(suggestion.item, suggestion.category);
+        render();
+      });
+      dismissBtn.addEventListener("click", () => {
+        if(!state.packingDismissed.includes(suggestion.id)){
+          state.packingDismissed.push(suggestion.id);
+          save(KEYS.packingDismissed, state.packingDismissed);
+        }
+        render();
+      });
+      wrap.appendChild(row);
     });
   }
 
