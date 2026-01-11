@@ -1,4 +1,4 @@
-<!doctype html>
+ <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -840,6 +840,7 @@ h1.font-script{
           <button id="exportBackupBtn" class="btn-primary" type="button">Export Backup</button>
           <button id="importBackupBtn" class="btn-secondary" type="button">Import Backup</button>
           <input id="importBackupFile" type="file" accept="application/json" style="display:none" />
+          <span id="syncStatus" class="text-sm text-gray-600" style="margin-left:10px;"></span>
         </div>
         <p class="text-xs text-gray-500 mt-2" style="margin-bottom:0;">Replace overwrites saved data; Merge combines JSON lists and objects when possible.</p>
       </div>
@@ -1154,6 +1155,12 @@ h1.font-script{
     lastExportEl.textContent = formatExportTime(localStorage.getItem(LAST_EXPORT_KEY));
   }
 
+  function setSyncStatus(message){
+    const el = document.getElementById("syncStatus");
+    if(!el) return;
+    el.textContent = message || "";
+  }
+
   function buildExportPayload(){
     const data = {};
     STORAGE_KEYS.forEach(key => {
@@ -1183,6 +1190,7 @@ h1.font-script{
     const payload = buildExportPayload();
     save(LAST_EXPORT_KEY, payload.exportedAt);
     renderSync();
+    setSyncStatus("Backup exported ✓");
     const dateStamp = payload.exportedAt.slice(0, 10);
     downloadJsonFile(`honeymoon-planner-backup-${dateStamp}.json`, JSON.stringify(payload, null, 2));
   }
@@ -1263,7 +1271,12 @@ h1.font-script{
 
   function handleImportFile(file, mode){
     if(!file) return;
+    setSyncStatus("Reading backup…");
     const reader = new FileReader();
+    reader.onerror = () => {
+      setSyncStatus("");
+      alert("Could not read that file. Please try again.");
+    };
     reader.onload = () => {
       try{
         const payload = JSON.parse(String(reader.result || ""));
@@ -1273,10 +1286,13 @@ h1.font-script{
         }
         const confirmed = confirm("Import this backup? This will update your saved data.");
         if(!confirmed) return;
+        setSyncStatus("Importing…");
         applyImportData(payload.data, mode);
+        setSyncStatus("Import complete — reloading…");
         alert("Import complete! Reloading your planner.");
         location.reload();
       }catch(e){
+        setSyncStatus("");
         alert("Sorry, that file isn’t valid JSON. Please choose a backup file exported from this planner.");
       }
     };
@@ -2256,7 +2272,11 @@ h1.font-script{
     const importFile = document.getElementById("importBackupFile");
     const importMode = document.getElementById("importMode");
     if(importBtn && importFile){
-      importBtn.addEventListener("click", () => importFile.click());
+      importBtn.addEventListener("click", () => {
+        if(importFile) importFile.value = "";
+        setSyncStatus("");
+        importFile.click();
+      });
       importFile.addEventListener("change", (e) => {
         const file = e.target.files && e.target.files[0];
         const mode = importMode ? importMode.value : "replace";
