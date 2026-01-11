@@ -1482,10 +1482,10 @@ h1.font-script{
   }
   function mapIdeaCategory(type){
     const normalized = (type || "").toLowerCase();
-    if(normalized === "food") return "Food";
+    if(normalized === "food") return "Food & Drinks";
     if(["outdoors","scenic","attraction","day trip"].includes(normalized)) return "Activities";
     if(normalized === "shopping") return "Shopping";
-    return "Misc";
+    return "Miscellaneous";
   }
   function addIdeaToBudget(idea){
     if(!idea || !Number.isFinite(idea.estCost) || idea.estCost <= 0) return;
