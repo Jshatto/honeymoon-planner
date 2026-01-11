@@ -486,7 +486,7 @@ h1.font-script{
             <option value="Parking & Tolls">Parking & Tolls</option>
             <option value="Miscellaneous">Miscellaneous</option>
           </select>
-          <input id="bItem" type="text" placeholder="Item" />
+          <input id="bItem" type="text" placeholder="Item (optional)" />
           <input id="bAmt" type="number" step="0.01" placeholder="Amount" />
           <button id="bAdd" class="btn-primary" type="button">Add</button>
         </div>
@@ -1208,7 +1208,7 @@ h1.font-script{
     const cat = document.getElementById("bCat").value.trim();
     const item = document.getElementById("bItem").value.trim();
     const amt = document.getElementById("bAmt").value.trim();
-    if(!cat || !item || !amt) return;
+    if(!cat || !amt) return;
     state.budget.push({ id: Date.now(), category: cat, item, amount: parseFloat(amt)||0, paid:false });
     save(KEYS.budget, state.budget);
     document.getElementById("bCat").value = "";
@@ -1684,7 +1684,7 @@ h1.font-script{
       const tr = el(`
         <tr>
           <td>${escapeHtml(b.category)}</td>
-          <td>${escapeHtml(b.item)}</td>
+          <td>${b.item ? escapeHtml(b.item) : "<span class=\"text-gray-500\">—</span>"}</td>
           <td class="right">$${money(b.amount)}</td>
           <td class="center"><input type="checkbox" ${b.paid ? "checked" : ""} /></td>
           <td class="center"><button class="icon-btn" title="Delete" type="button">🗑️</button></td>
