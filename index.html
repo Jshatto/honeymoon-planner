@@ -632,21 +632,6 @@ h1.font-script{
         </div>
       </div>
 
-      <div class="mb-6 p-4 card" id="packingSuggestionsCard">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
-          <div>
-            <h3 class="font-semibold" style="color:var(--ink); margin:0 0 6px;">Suggested from itinerary</h3>
-            <p class="text-sm text-gray-600" style="margin:0;">Based on the events you have planned.</p>
-          </div>
-          <div class="inline-flex items-center gap-2">
-            <button id="packingSuggestBtn" class="btn-primary text-sm" type="button">Suggest packing from itinerary</button>
-            <button id="packingSuggestionsReset" class="text-sm text-gray-500" type="button">Reset suggestions</button>
-            <span id="packingSuggestionsCount" class="text-sm text-gray-500"></span>
-          </div>
-        </div>
-        <div id="packingSuggestionsRoot" class="mt-4"></div>
-      </div>
-
       <div class="card p-3" id="packingRoot"></div>
     </section>
 
@@ -781,7 +766,6 @@ h1.font-script{
     shopping: "honeymoon-shopping",
     shoppingDismissed: "honeymoon-shopping-dismissed",
     packing: "honeymoon-packing",
-    packingDismissed: "honeymoon-packing-dismissed",
     ideas: "honeymoon-ideas",
     notes: "honeymoon-notes"
   };
@@ -853,58 +837,6 @@ h1.font-script{
     { id: 6, category: "Misc", item: "Sunglasses / sunscreen", packed: false }
   ];
 
-  const PACKING_SUGGESTION_RULES = [
-    {
-      id: "hiking",
-      label: "Hiking days",
-      keywords: ["hike", "trail", "smokies", "national park"],
-      items: [
-        { item: "Hiking shoes", category: "Clothing" },
-        { item: "Bug spray", category: "Toiletries" },
-        { item: "Water bottle", category: "Misc" },
-        { item: "Light rain jacket", category: "Clothing" }
-      ]
-    },
-    {
-      id: "relax",
-      label: "Hot tub time",
-      keywords: ["hot tub", "spa", "pool"],
-      items: [
-        { item: "Swimsuit", category: "Clothing" },
-        { item: "Sandals", category: "Clothing" },
-        { item: "Hair tie", category: "Toiletries" }
-      ]
-    },
-    {
-      id: "date-night",
-      label: "Date nights",
-      keywords: ["dinner", "reservation", "date night"],
-      items: [
-        { item: "Nice outfit", category: "Clothing" },
-        { item: "Nicer shoes", category: "Clothing" }
-      ]
-    },
-    {
-      id: "drive",
-      label: "Driving days",
-      keywords: ["drive", "road trip", "scenic drive", "arrival", "check-in", "checkout"],
-      items: [
-        { item: "Car charger", category: "Tech" },
-        { item: "Sunglasses", category: "Misc" },
-        { item: "Snacks", category: "Misc" }
-      ]
-    },
-    {
-      id: "rain",
-      label: "Rainy-day plans",
-      keywords: ["rain", "aquarium", "museum"],
-      items: [
-        { item: "Compact umbrella", category: "Misc" },
-        { item: "Light waterproof layer", category: "Clothing" }
-      ]
-    }
-  ];
-
   const SHOPPING_SUGGESTION_RULES = [
     {
       id: "hike",
@@ -939,8 +871,6 @@ h1.font-script{
     shoppingDismissed: [],
     shoppingSuggestionActive: false,
     packing: [],
-    packingDismissed: [],
-    packingSuggestionActive: false,
     ideas: [],
     notes: ""
   };
@@ -1066,11 +996,6 @@ h1.font-script{
       const sd = localStorage.getItem(KEYS.shoppingDismissed);
       state.shoppingDismissed = sd ? JSON.parse(sd) : [];
     }catch(e){ state.shoppingDismissed = []; }
-
-    try{
-      const d = localStorage.getItem(KEYS.packingDismissed);
-      state.packingDismissed = d ? JSON.parse(d) : [];
-    }catch(e){ state.packingDismissed = []; }
 
     try{
       const p = localStorage.getItem(KEYS.packing);
@@ -1408,15 +1333,6 @@ h1.font-script{
     state.packing = state.packing.filter(p => p.id !== id);
     save(KEYS.packing, state.packing);
     render();
-  }
-  function enablePackingSuggestions(){
-    state.packingSuggestionActive = true;
-    renderPackingSuggestions();
-  }
-  function resetPackingSuggestions(){
-    state.packingDismissed = [];
-    save(KEYS.packingDismissed, state.packingDismissed);
-    renderPackingSuggestions();
   }
 
   function enableShoppingSuggestions(){
@@ -1787,7 +1703,6 @@ h1.font-script{
   }
 
   function renderPacking(){
-    renderPackingSuggestions();
     const root = document.getElementById("packingRoot");
     root.innerHTML = "";
     if(state.packing.length === 0){
@@ -1827,87 +1742,6 @@ h1.font-script{
       delBtns.forEach((btn, idx) => btn.addEventListener("click", () => deletePacking(items[idx].id)));
 
       root.appendChild(block);
-    });
-  }
-
-  function getPackingSuggestions(){
-    const dismissed = new Set(state.packingDismissed || []);
-    const existing = new Set(state.packing.map(p => normalizePackingKey(p.category, p.item)));
-    const suggestions = [];
-    const seen = new Set();
-    state.itinerary.forEach(it => {
-      const text = (it.event || "").toLowerCase();
-      if(!text) return;
-      PACKING_SUGGESTION_RULES.forEach(rule => {
-        if(!rule.keywords.some(keyword => text.includes(keyword))) return;
-        rule.items.forEach(item => {
-          const normalizedKey = normalizePackingKey(item.category, item.item);
-          const suggestionId = `${rule.id}:${normalizedKey}`;
-          if(!normalizedKey || dismissed.has(suggestionId) || existing.has(normalizedKey) || seen.has(suggestionId)) return;
-          suggestions.push({
-            id: suggestionId,
-            item: item.item,
-            category: item.category || "Other",
-            reason: rule.label
-          });
-          seen.add(suggestionId);
-        });
-      });
-    });
-    return suggestions;
-  }
-
-  function renderPackingSuggestions(){
-    const wrap = document.getElementById("packingSuggestionsRoot");
-    const countEl = document.getElementById("packingSuggestionsCount");
-    const resetBtn = document.getElementById("packingSuggestionsReset");
-    if(!wrap || !countEl) return;
-    if(resetBtn){
-      resetBtn.disabled = (state.packingDismissed || []).length === 0;
-      resetBtn.style.opacity = resetBtn.disabled ? "0.5" : "1";
-    }
-    if(!state.packingSuggestionActive){
-      countEl.textContent = "";
-      wrap.innerHTML = "";
-      wrap.appendChild(el(`<div class="text-sm text-gray-600">Click “Suggest packing from itinerary” to see ideas.</div>`));
-      return;
-    }
-    const suggestions = getPackingSuggestions();
-    countEl.textContent = suggestions.length
-      ? `${suggestions.length} suggestion${suggestions.length > 1 ? "s" : ""}`
-      : "";
-    wrap.innerHTML = "";
-    if(suggestions.length === 0){
-      wrap.appendChild(el(`<div class="text-sm text-gray-600">No suggestions right now.</div>`));
-      return;
-    }
-
-    suggestions.forEach(suggestion => {
-      const row = el(`
-        <div class="row-item hover-bg" style="border-bottom:1px solid #F3F4F6;">
-          <div class="row-text">
-            <div class="text-sm" style="font-weight:800;">${escapeHtml(suggestion.item)}</div>
-            <div class="text-xs text-gray-600">Suggested for ${escapeHtml(suggestion.reason || "this plan")}</div>
-          </div>
-          <div class="inline-flex items-center gap-2">
-            <button class="btn-primary text-sm" type="button">Add</button>
-            <button class="text-sm text-gray-500" type="button">Dismiss</button>
-          </div>
-        </div>
-      `);
-      const [addBtn, dismissBtn] = row.querySelectorAll("button");
-      addBtn.addEventListener("click", () => {
-        addPackingItem(suggestion.item, suggestion.category);
-        render();
-      });
-      dismissBtn.addEventListener("click", () => {
-        if(!state.packingDismissed.includes(suggestion.id)){
-          state.packingDismissed.push(suggestion.id);
-          save(KEYS.packingDismissed, state.packingDismissed);
-        }
-        render();
-      });
-      wrap.appendChild(row);
     });
   }
 
@@ -2111,9 +1945,6 @@ h1.font-script{
     document.getElementById("shoppingSuggestionsReset").addEventListener("click", resetShoppingSuggestions);
 
     document.getElementById("pAdd").addEventListener("click", addPacking);
-
-    document.getElementById("packingSuggestBtn").addEventListener("click", enablePackingSuggestions);
-    document.getElementById("packingSuggestionsReset").addEventListener("click", resetPackingSuggestions);
 
     document.getElementById("ideaAddBtn").addEventListener("click", addIdea);
     ["ideaSearch","ideaFilterType","ideaFilterArea","ideaFilterPriority","ideaFilterWeather"].forEach(id => {
