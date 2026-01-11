@@ -749,6 +749,36 @@ h1.font-script{
         <textarea id="notesText" rows="18" class="w-full" placeholder="Add your notes, ideas, decisions, reminders..."></textarea>
       </div>
     </section>
+
+    <section id="tab-sync" class="hidden">
+      <div class="mb-6 p-6 card">
+        <h2 class="text-xl font-semibold" style="color:var(--ink); margin:0 0 6px;">Sync &amp; Backup</h2>
+        <p class="text-sm text-gray-600" style="margin:0;">Export your planner to a JSON file and import it on another device.</p>
+      </div>
+
+      <div class="card p-6">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-sm text-gray-600">Last export</div>
+            <div id="lastExportAt" class="text-lg font-semibold" style="color:var(--ink);">Never</div>
+          </div>
+          <div>
+            <label for="importMode" class="text-sm text-gray-600">Import mode</label>
+            <select id="importMode" class="w-full mt-2">
+              <option value="replace" selected>Replace</option>
+              <option value="merge">Merge</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-6 inline-flex items-center gap-2">
+          <button id="exportBackupBtn" class="btn-primary" type="button">Export Backup</button>
+          <button id="importBackupBtn" class="btn-secondary" type="button">Import Backup</button>
+          <input id="importBackupFile" type="file" accept="application/json" style="display:none" />
+        </div>
+        <p class="text-xs text-gray-500 mt-2" style="margin-bottom:0;">Replace overwrites saved data; Merge combines JSON lists and objects when possible.</p>
+      </div>
+    </section>
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -770,6 +800,25 @@ h1.font-script{
     notes: "honeymoon-notes"
   };
 
+  const LAST_EXPORT_KEY = "honeymoonPlanner_lastExportAt";
+
+  const STORAGE_KEYS = [
+    KEYS.activeTab,
+    KEYS.items,
+    KEYS.expanded,
+    KEYS.budget,
+    KEYS.totalBudget,
+    KEYS.lodging,
+    KEYS.contacts,
+    KEYS.itinerary,
+    KEYS.shopping,
+    KEYS.shoppingDismissed,
+    KEYS.packing,
+    KEYS.ideas,
+    KEYS.notes,
+    LAST_EXPORT_KEY
+  ];
+
   const tabs = [
     { id: "checklist", name: "Checklist", icon: "✅" },
     { id: "budget", name: "Budget", icon: "💵" },
@@ -778,7 +827,8 @@ h1.font-script{
     { id: "shopping", name: "Shopping", icon: "🛒" },
     { id: "packing", name: "Packing", icon: "🎒" },
     { id: "ideas", name: "Ideas", icon: "💡" },
-    { id: "notes", name: "Notes", icon: "📝" }
+    { id: "notes", name: "Notes", icon: "📝" },
+    { id: "sync", name: "Sync & Backup", icon: "🔄" }
   ];
 
   const sections = [
@@ -1026,6 +1076,149 @@ h1.font-script{
 
   function save(key, val){
     try{ localStorage.setItem(key, typeof val === "string" ? val : JSON.stringify(val)); }catch(e){}
+  }
+
+  // ===== Sync & Backup (Import/Export) =====
+  function formatExportTime(value){
+    if(!value) return "Never";
+    const dt = new Date(value);
+    if(Number.isNaN(dt.getTime())) return value;
+    return dt.toLocaleString();
+  }
+
+  function renderSync(){
+    const lastExportEl = document.getElementById("lastExportAt");
+    if(!lastExportEl) return;
+    lastExportEl.textContent = formatExportTime(localStorage.getItem(LAST_EXPORT_KEY));
+  }
+
+  function buildExportPayload(){
+    const data = {};
+    STORAGE_KEYS.forEach(key => {
+      data[key] = localStorage.getItem(key);
+    });
+    return {
+      app: "honeymoon-planner",
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      data
+    };
+  }
+
+  function downloadJsonFile(filename, contents){
+    const blob = new Blob([contents], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function exportBackup(){
+    const payload = buildExportPayload();
+    save(LAST_EXPORT_KEY, payload.exportedAt);
+    renderSync();
+    const dateStamp = payload.exportedAt.slice(0, 10);
+    downloadJsonFile(`honeymoon-planner-backup-${dateStamp}.json`, JSON.stringify(payload, null, 2));
+  }
+
+  function safeParseJson(value){
+    if(typeof value !== "string") return { isJson: false, parsed: null };
+    try{
+      return { isJson: true, parsed: JSON.parse(value) };
+    }catch(e){
+      return { isJson: false, parsed: null };
+    }
+  }
+
+  function mergeArrays(existing, incoming){
+    const result = [];
+    const seen = new Set();
+    const addItem = (item) => {
+      let key;
+      if(item && typeof item === "object" && "id" in item){
+        key = `id:${String(item.id)}`;
+      }else{
+        try{
+          key = `json:${JSON.stringify(item)}`;
+        }catch(e){
+          key = `str:${String(item)}`;
+        }
+      }
+      if(seen.has(key)) return;
+      seen.add(key);
+      result.push(item);
+    };
+    (existing || []).forEach(addItem);
+    (incoming || []).forEach(addItem);
+    return result;
+  }
+
+  function applyImportData(data, mode){
+    const allowedKeys = new Set(STORAGE_KEYS);
+    Object.entries(data || {}).forEach(([key, incomingRaw]) => {
+      if(!allowedKeys.has(key)) return;
+      if(incomingRaw === null || typeof incomingRaw === "undefined"){
+        localStorage.removeItem(key);
+        return;
+      }
+
+      if(mode !== "merge"){
+        localStorage.setItem(key, String(incomingRaw));
+        return;
+      }
+
+      const incomingParsed = safeParseJson(incomingRaw);
+      const existingRaw = localStorage.getItem(key);
+      const existingParsed = safeParseJson(existingRaw);
+
+      if(incomingParsed.isJson && Array.isArray(incomingParsed.parsed)){
+        if(existingParsed.isJson && Array.isArray(existingParsed.parsed)){
+          const merged = mergeArrays(existingParsed.parsed, incomingParsed.parsed);
+          localStorage.setItem(key, JSON.stringify(merged));
+        }else{
+          localStorage.setItem(key, JSON.stringify(incomingParsed.parsed));
+        }
+        return;
+      }
+
+      if(incomingParsed.isJson && incomingParsed.parsed && typeof incomingParsed.parsed === "object"){
+        if(existingParsed.isJson && existingParsed.parsed && typeof existingParsed.parsed === "object" && !Array.isArray(existingParsed.parsed)){
+          const merged = { ...existingParsed.parsed, ...incomingParsed.parsed };
+          localStorage.setItem(key, JSON.stringify(merged));
+        }else{
+          localStorage.setItem(key, JSON.stringify(incomingParsed.parsed));
+        }
+        return;
+      }
+
+      localStorage.setItem(key, String(incomingRaw));
+    });
+  }
+
+  function handleImportFile(file, mode){
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const payload = JSON.parse(String(reader.result || ""));
+        if(!payload || typeof payload !== "object" || !payload.data){
+          alert("That file doesn’t look like a valid honeymoon planner backup.");
+          return;
+        }
+        const confirmed = confirm("Import this backup? This will update your saved data.");
+        if(!confirmed) return;
+        applyImportData(payload.data, mode);
+        alert("Import complete! Reloading your planner.");
+        location.reload();
+      }catch(e){
+        alert("Sorry, that file isn’t valid JSON. Please choose a backup file exported from this planner.");
+      }
+    };
+    reader.readAsText(file);
   }
 
   function setActiveTab(id){
@@ -1913,6 +2106,7 @@ h1.font-script{
     renderPacking();
     renderIdeas();
     renderNotes();
+    renderSync();
   }
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -1955,6 +2149,24 @@ h1.font-script{
     });
 
     document.getElementById("notesText").addEventListener("input", (e) => saveNotes(e.target.value));
+
+    const exportBtn = document.getElementById("exportBackupBtn");
+    if(exportBtn){
+      exportBtn.addEventListener("click", exportBackup);
+    }
+
+    const importBtn = document.getElementById("importBackupBtn");
+    const importFile = document.getElementById("importBackupFile");
+    const importMode = document.getElementById("importMode");
+    if(importBtn && importFile){
+      importBtn.addEventListener("click", () => importFile.click());
+      importFile.addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        const mode = importMode ? importMode.value : "replace";
+        handleImportFile(file, mode);
+        importFile.value = "";
+      });
+    }
   });
   </script>
 </body>
