@@ -473,7 +473,19 @@ h1.font-script{
       <div class="mb-6 p-4 card">
         <h3 class="font-semibold" style="color:var(--ink); margin:0 0 12px;">Add Expense</h3>
         <div class="grid grid-cols-4 gap-2">
-          <input id="bCat" type="text" placeholder="Category (Lodging, Food, Activities...)" />
+          <select id="bCat">
+            <option value="">Select category...</option>
+            <option value="Lodging">Lodging</option>
+            <option value="Transportation">Transportation</option>
+            <option value="Food & Drinks">Food & Drinks</option>
+            <option value="Activities">Activities</option>
+            <option value="Tickets & Tours">Tickets & Tours</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Souvenirs">Souvenirs</option>
+            <option value="Tips">Tips</option>
+            <option value="Parking & Tolls">Parking & Tolls</option>
+            <option value="Miscellaneous">Miscellaneous</option>
+          </select>
           <input id="bItem" type="text" placeholder="Item" />
           <input id="bAmt" type="number" step="0.01" placeholder="Amount" />
           <button id="bAdd" class="btn-primary" type="button">Add</button>
